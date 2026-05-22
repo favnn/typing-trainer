@@ -1,0 +1,76 @@
+export const lessonsByTheme = [
+  { name: "А, О и Г", lessons: 5 },
+  { name: "в,у,л и ш", lessons: 7 },
+  { name: "ы,ц,д,щ", lessons: 7 },
+  { name: "п,е,р,н", lessons: 7 },
+  { name: "ф,й,з", lessons: 8 },
+  { name: "к,и,т", lessons: 7 },
+  { name: "м,ь,с", lessons: 5 },
+  { name: "ч,я", lessons: 7 },
+  { name: "х,ъ", lessons: 9 },
+  { name: "ж,э", lessons: 9 },
+  { name: "б,ю", lessons: 9 }
+];
+
+export function generateLessonText(themeIndex, lessonIndex, lang) {
+  const letters = {
+    0: ['а', 'о', 'г'],
+    1: ['в', 'у', 'л', 'ш'],
+    2: ['ы', 'ц', 'д', 'щ'],
+    3: ['п', 'е', 'р', 'н'],
+    4: ['ф', 'й', 'з'],
+    5: ['к', 'и', 'т'],
+    6: ['м', 'ь', 'с'],
+    7: ['ч', 'я'],
+    8: ['х', 'ъ'],
+    9: ['ж', 'э'],
+    10: ['б', 'ю']
+  };
+  
+  const currentLetters = letters[themeIndex] || ['а', 'о'];
+  const step = lessonIndex % 5;
+  
+  if (step === 0) {
+    let result = [];
+    for (let i = 0; i < 3; i++) {
+      currentLetters.forEach(l => {
+        result.push(l.repeat(3));
+      });
+    }
+    return result.join(' ');
+  } else if (step === 1) {
+    let result = [];
+    for (let i = 0; i < 20; i++) {
+      result.push(currentLetters[Math.floor(Math.random() * currentLetters.length)]);
+    }
+    return result.join(' ');
+  } else if (step === 2) {
+    let result = [];
+    for (let i = 0; i < 15; i++) {
+      const l1 = currentLetters[Math.floor(Math.random() * currentLetters.length)];
+      const l2 = currentLetters[Math.floor(Math.random() * currentLetters.length)];
+      result.push(l1 + l2);
+    }
+    return result.join(' ');
+  } else if (step === 3) {
+    let result = [];
+    for (let i = 0; i < 12; i++) {
+      const l1 = currentLetters[Math.floor(Math.random() * currentLetters.length)];
+      const l2 = currentLetters[Math.floor(Math.random() * currentLetters.length)];
+      const l3 = currentLetters[Math.floor(Math.random() * currentLetters.length)];
+      result.push(l1 + l2 + l3);
+    }
+    return result.join(' ');
+  } else {
+    let result = [];
+    for (let i = 0; i < 10; i++) {
+      let len = 2 + Math.floor(Math.random() * 4);
+      let word = '';
+      for (let j = 0; j < len; j++) {
+        word += currentLetters[Math.floor(Math.random() * currentLetters.length)];
+      }
+      result.push(word);
+    }
+    return result.join(' ');
+  }
+}

@@ -1,0 +1,20 @@
+export const russianWords = [
+  'мама', 'папа', 'дом', 'кот', 'собака', 'солнце', 'луна', 'звезда', 'вода', 'огонь',
+  'земля', 'воздух', 'радость', 'грусть', 'бег', 'сон', 'еда', 'работа', 'игра', 'книга',
+  'стол', 'стул', 'окно', 'дверь', 'город', 'дерево', 'цветок', 'птица', 'рыба', 'машина'
+];
+
+export const englishWords = [
+  'hello', 'world', 'cat', 'dog', 'sun', 'moon', 'star', 'water', 'fire', 'earth',
+  'air', 'joy', 'sad', 'run', 'sleep', 'food', 'work', 'play', 'book', 'table',
+  'chair', 'window', 'door', 'city', 'tree', 'flower', 'bird', 'fish', 'car', 'house'
+];
+
+export const punctuationMarks = ['!', ',', '.', '?', '(', ')', '"', '—'];
+
+export const quotes = [
+  { text: "The only limit is your mind.", lang: 'en' },
+  { text: "Быстрее, выше, сильнее!", lang: 'ru' },
+  { text: "To be or not to be, that is the question.", lang: 'en' },
+  { text: "Умом Россию не понять.", lang: 'ru' }
+];

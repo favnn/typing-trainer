@@ -1,0 +1,170 @@
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Dict, Any, Optional, List
+import bcrypt
+import databases
+import sqlalchemy
+from sqlalchemy import Table, Column, String, Integer, JSON, select
+
+DATABASE_URL = "sqlite:///./typing_trainer.db"
+
+database = databases.Database(DATABASE_URL)
+metadata = sqlalchemy.MetaData()
+
+users = Table(
+    "users",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("username", String, unique=True),
+    Column("password", String),
+    Column("userData", JSON),
+)
+
+engine = sqlalchemy.create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+metadata.create_all(engine)
+
+app = FastAPI(title="Typing Trainer API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
+
+class UserRegister(BaseModel):
+    username: str
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class UserDataUpdate(BaseModel):
+    coins: Optional[int] = None
+    bestSpeedWPM: Optional[int] = None
+    bestSpeedCPM: Optional[int] = None
+    avgAccuracy: Optional[float] = None
+    lastAccuracy: Optional[float] = None
+    bestAccuracy: Optional[float] = None
+    maxCombo: Optional[int] = None
+    problemKeys: Optional[Dict[str, int]] = None
+    lessonsProgressRu: Optional[Dict[str, bool]] = None
+    lessonsProgressEn: Optional[Dict[str, bool]] = None
+    lessonsStatsRu: Optional[Dict[str, Any]] = None
+    lessonsStatsEn: Optional[Dict[str, Any]] = None
+    purchasedItems: Optional[List[str]] = None
+    activeSkins: Optional[Dict[str, str]] = None
+
+    class Config:
+        extra = 'allow'   # разрешаем любые дополнительные поля
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+def verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode(), hashed.encode())
+
+def get_default_user_data():
+    return {
+        "coins": 500,
+        "bestSpeedWPM": 0,
+        "bestSpeedCPM": 0,
+        "avgAccuracy": 0,
+        "lastAccuracy": 0,
+        "bestAccuracy": 0,
+        "maxCombo": 0,
+        "problemKeys": {},
+        "lessonsProgressRu": {},
+        "lessonsProgressEn": {},
+        "lessonsStatsRu": {},
+        "lessonsStatsEn": {},
+        "purchasedItems": [],
+        "activeSkins": {}
+    }
+
+@app.post("/api/register")
+async def register(user: UserRegister):
+    query = select(users).where(users.c.username == user.username)
+    existing = await database.fetch_one(query)
+    if existing:
+        raise HTTPException(400, "Пользователь уже существует")
+    
+    new_user = {
+        "username": user.username,
+        "password": hash_password(user.password),
+        "userData": get_default_user_data()
+    }
+    
+    user_id = await database.execute(users.insert().values(**new_user))
+    
+    return {
+        "id": user_id,
+        "username": user.username,
+        "userData": new_user["userData"]
+    }
+
+@app.post("/api/login")
+async def login(user: UserLogin):
+    query = select(users).where(users.c.username == user.username)
+    db_user = await database.fetch_one(query)
+    if not db_user:
+        raise HTTPException(400, "Пользователь не найден")
+    
+    if not verify_password(user.password, db_user["password"]):
+        raise HTTPException(400, "Неверный пароль")
+    
+    return {
+        "id": db_user["id"],
+        "username": db_user["username"],
+        "userData": db_user["userData"]
+    }
+
+@app.get("/api/user/{username}")
+async def get_user(username: str):
+    query = select(users).where(users.c.username == username)
+    db_user = await database.fetch_one(query)
+    if not db_user:
+        raise HTTPException(404, "Пользователь не найден")
+    return {
+        "id": db_user["id"],
+        "username": db_user["username"],
+        "userData": db_user["userData"]
+    }
+    
+@app.put("/api/user/{username}")
+async def update_user(username: str, update_data: UserDataUpdate):
+    query = select(users).where(users.c.username == username)
+    db_user = await database.fetch_one(query)
+    if not db_user:
+        raise HTTPException(404, "Пользователь не найден")
+    
+    current_data = db_user["userData"]
+    update_dict = update_data.dict(exclude_none=True)
+    
+    for key, value in update_dict.items():
+        current_data[key] = value
+    
+    await database.execute(
+        users.update().where(users.c.username == username).values(userData=current_data)
+    )
+    
+    return {"success": True, "userData": current_data}
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "ok", "message": "Typing Trainer API работает с SQLite"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
