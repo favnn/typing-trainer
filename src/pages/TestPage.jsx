@@ -613,7 +613,11 @@ useEffect(() => {
       )}
 
       {isActive && <ComboSystem combo={combo} lastAccuracy={Math.round((correctChars / (correctChars + mistakesCount)) * 100)} isActive={isActive} />}
-      <KeyboardGuide nextChar={nextChar} keyboardTheme={keyboardTheme} />
+      {
+        !stats && (
+          <KeyboardGuide nextChar={nextChar}keyboardTheme={keyboardTheme} language={language}/>
+        )
+      }
     </div>
   );
 };
