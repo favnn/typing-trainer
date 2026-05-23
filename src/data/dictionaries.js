@@ -32,7 +32,7 @@ export const englishWords = [
   'south', 'west', 'east', 'mountain', 'river', 'sea', 'ocean', 'forest', 'sky', 'cloud'
 ];
 
-export const punctuationMarks = ['!', ',', '.', '?', '(', ')', '"', '—', ';', ':'];
+export const punctuationMarks = ['!', ',', '.', '?', '(', ')', '"', '-', ';', ':'];
 
 export const quotes = [
   { text: "The only limit is your mind.", lang: 'en' },
