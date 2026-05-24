@@ -68,7 +68,18 @@
     return null;
     };
 
-    const HandsGuide = ({ nextChar, language = 'russian', highlightColor = '#ffd700', shiftKeyId = null }) => {
+    const HandsGuide = ({
+    nextChar,
+    language = 'russian',
+    highlightColor = '#ffd700',
+    shiftKeyId = null,
+    side = 'both',
+    showHint = true
+    }) => {
+    const isSideMode = side !== 'both';
+    const showLeftHand = side === 'both' || side === 'left';
+    const showRightHand = side === 'both' || side === 'right';
+
     const activeFingers = [];
 
     const mainFinger = getFingerByChar(nextChar, language);
@@ -83,9 +94,11 @@
 
     const styles = {
     container: {
-        marginTop: '24px',
-        paddingTop: '22px',
-        borderTop: '1px solid rgba(255,255,255,0.1)'
+        marginTop: isSideMode ? '0' : '24px',
+        paddingTop: isSideMode ? '0' : '22px',
+        borderTop: isSideMode ? 'none' : '1px solid rgba(255,255,255,0.1)',
+        width: isSideMode ? '165px' : '100%',
+        overflow: 'visible'
     },
     hint: {
         textAlign: 'center',
@@ -98,8 +111,10 @@
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'flex-end',
-        gap: '70px',
-        minWidth: '760px'
+        gap: isSideMode ? '0' : '70px',
+        minWidth: isSideMode ? '165px' : '760px',
+        width: isSideMode ? '165px' : 'auto',
+        overflow: 'visible'
     },
     hand: {
         position: 'relative',
@@ -108,7 +123,10 @@
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        flexShrink: 0,
+        transform: isSideMode ? 'scale(0.62)' : 'scale(1)',
+        transformOrigin: 'center center'
     },
     fingers: {
         display: 'flex',
@@ -205,13 +223,16 @@
         `}
         </style>
 
+        {showHint && (
         <div style={styles.hint}>
             {uniqueActiveFingers.length > 0
             ? ` ${uniqueActiveFingers.map(finger => FINGER_LABELS[finger]).join(' + ')}`
             : 'Для следующей клавиши палец не определён'}
         </div>
+        )}
 
         <div style={styles.handsWrapper}>
+        {showLeftHand && (
         <div style={styles.hand}>
             <div style={styles.fingers}>
             {leftFingers.map(renderFinger)}
@@ -228,7 +249,9 @@
 
             <div style={styles.palm}>Левая рука</div>
         </div>
+        )}
 
+        {showRightHand && (
         <div style={styles.hand}>
             <div style={styles.fingers}>
             {rightFingers.map(renderFinger)}
@@ -245,6 +268,7 @@
 
             <div style={styles.palm}>Правая рука</div>
         </div>
+        )}
         </div>
     </div>
     );

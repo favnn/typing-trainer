@@ -11,6 +11,7 @@ const LessonTrainer = ({ lessonText, themeName, lessonNum, lang, onComplete, onB
   const [mistakesCount, setMistakesCount] = useState(0);
   const [currentCharIndex, setCurrentCharIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
+  const [typingHistory, setTypingHistory] = useState([]);
   const inputRef = useRef(null);
 
   const targetText = lessonText;
@@ -18,11 +19,11 @@ const LessonTrainer = ({ lessonText, themeName, lessonNum, lang, onComplete, onB
   const MIN_ACCURACY = 70;
 
   const styles = {
-    container: { padding: '2rem', maxWidth: '1200px', margin: '0 auto' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' },
+    container: { padding: '1rem', maxWidth: '1200px', margin: '0 auto' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' },
     backBtn: { background: '#3a3a4a', border: 'none', color: 'white', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' },
     title: { textAlign: 'center' },
-    lessonDisplay: { background: '#2d2d3a', padding: '2rem', borderRadius: '20px', margin: '1rem 0' },
+    lessonDisplay: { background: '#2d2d3a', padding: '10px', borderRadius: '20px', margin: '1rem 0' },
     lessonText: { fontSize: '1.8rem', lineHeight: '2.5rem', fontFamily: 'monospace', letterSpacing: '2px', wordBreak: 'break-all' },
     charCorrect: { color: '#ffffff', textShadow: '0 0 5px #4caf50' },
     charIncorrect: { color: '#f44336', backgroundColor: 'rgba(244, 67, 54, 0.3)', borderRadius: '3px', display: 'inline-block', minWidth: '20px' },
@@ -46,8 +47,8 @@ const LessonTrainer = ({ lessonText, themeName, lessonNum, lang, onComplete, onB
     const duration = (Date.now() - startTime) / 1000;
     const totalChars = correctChars + mistakesCount;
     const accuracy = totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
-    const cpm = correctChars > 0 ? (correctChars / (duration / 60)) : 0;
-    const wpm = (correctChars / 5) / (duration / 60);
+    const cpm = Math.round((targetChars.length / duration) * 60);
+    const wpm = Math.round(cpm / 5);
     const problemKeys = Object.keys(errors).sort((a, b) => errors[b] - errors[a]).slice(0, 5);
     const canPass = accuracy >= MIN_ACCURACY;
     let coinsEarned = 0;
@@ -57,48 +58,121 @@ const LessonTrainer = ({ lessonText, themeName, lessonNum, lang, onComplete, onB
       if (wpm > 50) coinsEarned += 20;
       if (wpm > 70) coinsEarned += 30;
     }
+    const finalPoint = {
+      second: Math.max(1, Math.round(duration)),
+      wpm: Math.round(wpm),
+      raw: Math.round(cpm),
+      burst: Math.round(wpm),
+      errors: mistakesCount
+    };
+
+    setTypingHistory(prev => {
+      if (prev.length > 0 && prev[prev.length - 1].second === finalPoint.second) {
+        const updated = [...prev];
+        updated[updated.length - 1] = finalPoint;
+        return updated;
+      }
+
+      return [...prev, finalPoint];
+    });
     setStats({
-      wpm: Math.round(wpm), cpm: Math.round(cpm), accuracy: Math.round(accuracy),
+      wpm: Math.round(wpm), raw: Math.round(cpm), cpm, accuracy: Math.round(accuracy),
       duration: Math.round(duration), language: lang === 'russian' ? 'Русский' : 'English',
       type: `${themeName}, урок ${lessonNum}`, problemKeys, passed: canPass, coinsEarned
     });
     setIsActive(false);
   };
 
-  const handleKeyPress = (e) => {
-    const key = e.key;
-    if (!isActive && key.length === 1) startLesson();
-    if (!isActive && key.length !== 1) return;
+  const addTypingHistoryPoint = (newCorrectChars, newMistakesCount, newIndex) => {
+  if (!startTime) return;
+
+  const elapsed = Math.max(1, Math.floor((Date.now() - startTime) / 1000));
+  const totalTyped = newIndex;
+
+  const cpm = Math.round(totalTyped / (elapsed / 60));
+  const wpm = Math.round(cpm / 5);
+
+  setTypingHistory(prev => {
+    const existingIndex = prev.findIndex(item => item.second === elapsed);
+
+    const point = {
+      second: elapsed,
+      wpm,
+      raw: cpm,
+      burst: wpm,
+      errors: newMistakesCount
+    };
+
+    if (existingIndex !== -1) {
+      const updated = [...prev];
+      updated[existingIndex] = point;
+      return updated;
+    }
+
+    return [...prev, point];
+  });
+};
+
+const handleKeyPress = (e) => {
+    const key = e.key === 'Spacebar' ? ' ' : e.key;
+    if (e.metaKey || e.ctrlKey || e.altKey) {
+      return;
+    }
+
     if (key === 'Backspace') {
       e.preventDefault();
+
       if (currentCharIndex > 0) {
         setCurrentCharIndex(prev => prev - 1);
         setDisplayText(prev => prev.slice(0, -1));
       }
+
       return;
     }
-    if (['Enter', 'Shift', 'Control', 'Alt', 'Tab', 'CapsLock'].includes(key)) {
+    if (key.length !== 1) {
+      return;
+    }
+    if (!isActive) {
+      startLesson();
+    }
+    if (currentCharIndex >= targetChars.length) {
       e.preventDefault();
       return;
     }
-    if (currentCharIndex >= targetChars.length) { e.preventDefault(); return; }
     e.preventDefault();
     const expectedChar = targetChars[currentCharIndex];
     setDisplayText(prev => prev + key);
+
+    let newCorrectChars = correctChars;
+    let newMistakesCount = mistakesCount;
+
     if (key === expectedChar) {
-      setCorrectChars(prev => prev + 1);
+      newCorrectChars = correctChars + 1;
+      setCorrectChars(newCorrectChars);
     } else {
-      setMistakesCount(prev => prev + 1);
-      setErrors(prev => ({ ...prev, [expectedChar.toLowerCase()]: (prev[expectedChar.toLowerCase()] || 0) + 1 }));
+      newMistakesCount = mistakesCount + 1;
+      setMistakesCount(newMistakesCount);
+
+      setErrors(prev => ({
+        ...prev,
+        [expectedChar.toLowerCase()]: (prev[expectedChar.toLowerCase()] || 0) + 1
+      }));
     }
+
     const newIndex = currentCharIndex + 1;
+
+    addTypingHistoryPoint(newCorrectChars, newMistakesCount, newIndex);
+
     setCurrentCharIndex(newIndex);
-    if (newIndex >= targetChars.length) finishLesson();
+
+    if (newIndex >= targetChars.length) {
+      finishLesson();
+    }
   };
 
   const handleRetry = () => {
     setDisplayText(''); setCurrentCharIndex(0); setCorrectChars(0); setMistakesCount(0);
-    setErrors({}); setStats(null); setIsActive(false); setStartTime(null);
+    setErrors({}); setStats(null); setIsActive(false); setStartTime(null); setTypingHistory([]);
     setTimeout(() => { if (inputRef.current) inputRef.current.focus(); }, 100);
   };
 
@@ -112,10 +186,72 @@ const LessonTrainer = ({ lessonText, themeName, lessonNum, lang, onComplete, onB
         } else if (index === currentCharIndex) {
           style = styles.charCurrent;
         }
-        return <span key={index} style={style}>{char}</span>;
+        const isSpace = char === ' ';
+        return (
+          <span
+            key={index}
+            style={
+              isSpace
+                ? {
+                    ...style,
+                    borderBottom: 'none',
+                    backgroundColor: 'transparent',
+                    boxShadow: 'none'
+                  }
+                : style
+            }
+          >
+            {isSpace ? '\u00A0' : char}
+          </span>
+        );
       })}
     </div>
   );
+
+  useEffect(() => {
+    if (isActive && startTime) {
+      const recordInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+
+        if (elapsed <= 0) return;
+
+        const totalChars = correctChars + mistakesCount;
+
+        const currentWPM = totalChars > 0
+          ? Math.round((totalChars / 5) / (elapsed / 60))
+          : 0;
+
+        const currentRAW = totalChars > 0
+          ? Math.round(totalChars / (elapsed / 60))
+          : 0;
+
+        setTypingHistory(prev => {
+          const existingIndex = prev.findIndex(item => item.second === elapsed);
+
+          const newRecord = {
+            second: elapsed,
+            wpm: currentWPM,
+            raw: currentRAW,
+            burst: currentWPM,
+            errors: mistakesCount
+          };
+
+          if (existingIndex !== -1) {
+            const updated = [...prev];
+            updated[existingIndex] = {
+              ...newRecord,
+              burst: Math.max(updated[existingIndex].burst, currentWPM)
+            };
+            return updated;
+          }
+
+          return [...prev, newRecord];
+        });
+      }, 1000);
+
+      return () => clearInterval(recordInterval);
+    }
+  }, [isActive, startTime, correctChars, mistakesCount]);
 
   useEffect(() => { if (inputRef.current && !stats) inputRef.current.focus(); }, [stats]);
 
@@ -124,7 +260,7 @@ const LessonTrainer = ({ lessonText, themeName, lessonNum, lang, onComplete, onB
     return (
       <div style={styles.container}>
         <div style={styles.completeScreen}>
-          <StatsDashboard stats={stats} title="📈 Результат урока" />
+          <StatsDashboard stats={stats} title="📈 Результат урока" typingHistory={typingHistory} />
           {canPass ? (
             <>
               <div style={styles.successMessage}>
@@ -162,11 +298,8 @@ const LessonTrainer = ({ lessonText, themeName, lessonNum, lang, onComplete, onB
       </div>
       <input ref={inputRef} type="text" value={displayText} onKeyDown={handleKeyPress}
         onChange={(e) => e.preventDefault()} placeholder="Нажмите любую клавишу для начала..." style={styles.input} autoFocus />
-      <div style={styles.hint}>
-        💡 Следующая буква: <strong style={{ color: '#ffd700' }}>"{nextChar || '✨'}"</strong>
-        {' | '} <strong>Backspace</strong> - удалить символ
-      </div>
-      <KeyboardGuide nextChar={nextChar} keyboardTheme={keyboardTheme} />
+
+      <KeyboardGuide nextChar={nextChar} keyboardTheme={keyboardTheme} language={lang}/>
     </div>
   );
 };

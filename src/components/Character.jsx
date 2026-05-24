@@ -5,10 +5,15 @@ import wardrobeItems from '../data/wardrobeItems';
 const Character = ({ activeWardrobe }) => {
   const getActive = (slot) => {
     const itemId = activeWardrobe?.[slot];
-    if (itemId && wardrobeItems[itemId]) return wardrobeItems[itemId];
+
+    if (itemId && wardrobeItems[itemId]?.slot === slot) {
+      return wardrobeItems[itemId];
+    }
+
     const defaultItem = Object.values(wardrobeItems).find(
       item => item.slot === slot && item.default
     );
+
     return defaultItem || wardrobeItems[`${slot}_default`];
   };
 
@@ -18,6 +23,7 @@ const Character = ({ activeWardrobe }) => {
   const legsItem = getActive('legs');
   const shoesItem = getActive('shoes');
   const hatItem = getActive('hat');
+  const capColor = hatItem?.color
 
   const skinColor = characterBase.skinColor;
 
@@ -106,6 +112,7 @@ const Character = ({ activeWardrobe }) => {
     leftEar: { left: '-8px' },
     rightEar: { right: '-8px' },
     eye: {
+      zIndex: 2,
       width: '7px',
       height: '8px',
       borderRadius: '50%',
@@ -126,6 +133,7 @@ const Character = ({ activeWardrobe }) => {
       left: '1px',
     },
     mouth: {
+      zIndex: 2,
       width: '12px',
       height: '5px',
       borderRadius: '0 0 8px 8px',
@@ -162,13 +170,13 @@ const Character = ({ activeWardrobe }) => {
     },
     collar: {
       position: 'absolute',
-      top: '-2px',
+      top: `${bodyTop}px`,
       left: '50%',
       transform: 'translateX(-50%)',
       width: '24px',
       height: '16px',
       borderRadius: '0 0 12px 12px',
-      backgroundColor: '#ecf0f1',
+      backgroundColor: '#f5cba7',
       boxShadow: 'inset 0 -2px 3px rgba(0,0,0,0.1)',
       zIndex: 4,
     },
@@ -260,53 +268,59 @@ const Character = ({ activeWardrobe }) => {
       boxShadow: '0 1px 2px rgba(0,0,0,0.3)',
     },
     // Волосы – аккуратная «шапочка» с чёлкой
+    // Волосы
     hair: {
       position: 'absolute',
-      top: '-4px',
-      left: `${cx - 32}px`,
-      width: '64px',
-      height: '34px',
-      borderRadius: '32px 32px 0 0',
+      top: '-3px',
+      left: '0px',
+      width: '50px',
+      height: '20px',
+      borderRadius: '25px 25px 8px 8px',
       background: `linear-gradient(180deg, ${headItem.color} 0%, ${adjustColor(headItem.color, -10)} 100%)`,
-      boxShadow: 'inset 0 -1px 2px rgba(0,0,0,0.1)',
-      zIndex: 4,
+      boxShadow: 'inset 0 -1px 2px rgba(0,0,0,0.15)',
+      zIndex: 1,
+      pointerEvents: 'none',
     },
+
+    // Чёлка
     bangs: {
       position: 'absolute',
-      top: '11px',
+      top: '10px',
       left: '50%',
       transform: 'translateX(-50%)',
-      width: '58px',
-      height: '14px',
-      borderRadius: '14px 14px 0 0',
+      width: '42px',
+      height: '7px',
+      borderRadius: '0 0 12px 12px',
       backgroundColor: headItem.color,
-      boxShadow: '0 -1px 2px rgba(0,0,0,0.1)',
-      zIndex: 4,
+      boxShadow: '0 1px 2px rgba(0,0,0,0.12)',
+      zIndex: 1,
+      pointerEvents: 'none',
     },
     // Бейсболка
     capBase: {
       position: 'absolute',
-      top: '-14px',
+      top: `${headTop - 9}px`,
       left: '50%',
       transform: 'translateX(-50%)',
-      width: '56px',
-      height: '28px',
-      borderRadius: '50% 50% 0 0 / 60% 60% 0 0',
-      backgroundColor: headItem.color,
-      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-      zIndex: 5,
+      width: '58px',
+      height: '25px',
+      borderRadius: '29px 29px 8px 8px',
+      backgroundColor: capColor,
+      boxShadow: '0 2px 4px rgba(0,0,0,0.25)',
+      zIndex: 8,
     },
+
     capVisor: {
       position: 'absolute',
-      top: '14px',
+      top: `${headTop + 9}px`,
       left: '50%',
       transform: 'translateX(-50%)',
-      width: '44px',
-      height: '12px',
-      borderRadius: '0 0 12px 12px',
-      backgroundColor: adjustColor(headItem.color, -20),
-      boxShadow: '0 2px 3px rgba(0,0,0,0.15)',
-      zIndex: 4,
+      width: '48px',
+      height: '8px',
+      borderRadius: '0 0 14px 14px',
+      backgroundColor: adjustColor(capColor, -20),
+      boxShadow: '0 2px 3px rgba(0,0,0,0.18)',
+      zIndex: 8,
     },
     capButton: {
       position: 'absolute',
@@ -397,12 +411,12 @@ const Character = ({ activeWardrobe }) => {
     },
     topHatBand: {
       position: 'absolute',
-      top: '10px',
+      top: '-18px',
       left: '50%',
       transform: 'translateX(-50%)',
       width: '42px',
-      height: '8px',
-      backgroundColor: '#c0392b',
+      height: '7px',
+      backgroundColor: adjustColor(hatItem.color, -35),
       zIndex: 8,
       borderRadius: '2px',
     },
@@ -417,23 +431,6 @@ const Character = ({ activeWardrobe }) => {
           <div style={styles.hair} />
           <div style={styles.bangs} />
         </>
-      );
-    }
-    if (type === 'cap') {
-      return (
-        <>
-          <div style={styles.capBase}>
-            <div style={styles.capButton} />
-          </div>
-          <div style={styles.capVisor} />
-        </>
-      );
-    }
-    if (type === 'astronaut_helmet') {
-      return (
-        <div style={styles.astronautHelmet}>
-          <div style={styles.helmetVisor} />
-        </div>
       );
     }
     return null;
@@ -469,6 +466,24 @@ const Character = ({ activeWardrobe }) => {
         </>
       );
     }
+    if (hatItem.render === 'cap') {
+      return (
+        <>
+          <div style={styles.capBase}>
+            <div style={styles.capButton} />
+          </div>
+          <div style={styles.capVisor} />
+        </>
+      );
+    }
+
+    if (hatItem.render === 'astronaut_helmet') {
+      return (
+        <div style={styles.astronautHelmet}>
+          <div style={styles.helmetVisor} />
+        </div>
+      );
+    }
     if (hatItem.render === 'top_hat') {
       return (
         <>
@@ -493,19 +508,21 @@ const Character = ({ activeWardrobe }) => {
 
       {/* Голова */}
       <div style={styles.head}>
+        {renderHeadAccessory()}
+
         <div style={{ ...styles.ear, ...styles.leftEar }} />
         <div style={{ ...styles.ear, ...styles.rightEar }} />
+
         <div style={{ ...styles.eye, ...styles.leftEye }}>
           <div style={styles.eyeHighlight} />
         </div>
+
         <div style={{ ...styles.eye, ...styles.rightEye }}>
           <div style={styles.eyeHighlight} />
         </div>
+
         <div style={styles.mouth} />
       </div>
-
-      {/* Причёска / головной убор */}
-      {renderHeadAccessory()}
 
       {/* Шея */}
       <div style={styles.neck} />

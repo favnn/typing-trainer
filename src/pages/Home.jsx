@@ -1,10 +1,8 @@
 import React from 'react';
 import Character from '../components/Character';
-import characterSkins from '../data/characterSkins';
 
 const Home = ({ userData }) => {
-  const activeSkin = userData?.activeSkins?.character || 'char_default';
-  const skinData = characterSkins[activeSkin];
+  const activeWardrobe = userData?.activeWardrobe || {};
 
   const styles = {
     container: {
@@ -51,8 +49,9 @@ const Home = ({ userData }) => {
     <div style={styles.container}>
       <div style={styles.hero}>
         <div style={styles.characterWrapper}>
-          <Character skinId={activeSkin} />
+          <Character activeWardrobe={activeWardrobe} />
         </div>
+
         <h2>Тип-Мастер Клавиша</h2>
         <h3>Печатай быстрее, зарабатывай монеты!</h3>
         <p>Тренируй слепую печать, проходи уроки и соревнуйся сам с собой</p>
