@@ -32,7 +32,7 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
 
   const styles = {
     container: {
-      padding: '2rem',
+      padding: '10px',
       maxWidth: '1400px',
       margin: '0 auto'
     },
@@ -40,7 +40,7 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
       display: 'flex',
       gap: '12px',
       flexWrap: 'wrap',
-      marginBottom: '2rem',
+      marginBottom: '1rem',
       justifyContent: 'center'
     },
     btn: {
@@ -72,14 +72,14 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
     },
     typingArea: {
       background: '#2d2d3a',
-      padding: '2rem',
+      padding: '10px',
       borderRadius: '20px',
       margin: '1rem 0'
     },
     textToType: {
       fontSize: '1.5rem',
       lineHeight: '2rem',
-      marginBottom: '1.5rem',
+      marginBottom: '1rem',
       display: 'flex',
       flexWrap: 'wrap',
       gap: '12px',
@@ -203,16 +203,12 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
     if (!isActive) {
       setIsActive(true);
       setStartTime(Date.now());
+
       if (mode === 'time') {
+        if (timerRef.current) clearInterval(timerRef.current);
+
         timerRef.current = setInterval(() => {
-          setTimeLeft(prev => {
-            if (prev <= 1) {
-              clearInterval(timerRef.current);
-              finishTest();
-              return 0;
-            }
-            return prev - 1;
-          });
+          setTimeLeft(prev => Math.max(prev - 1, 0));
         }, 1000);
       }
     }
@@ -224,7 +220,7 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
   if (timerRef.current) clearInterval(timerRef.current);
 
   const endTime = Date.now();
-  const duration = mode === 'time' ? 30 - timeLeft : (endTime - startTime) / 1000;
+  const duration = mode === 'time' ? 30 : (endTime - startTime) / 1000;
   const totalWords = currentWordIndex;
   const totalChars = correctChars + mistakesCount;
   const accuracy = totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
@@ -232,13 +228,15 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
   const cpm = correctChars > 0 ? (correctChars / (duration / 60)) : 0;
 
   // Вместо generateTypingHistory, просто дополняем историю финальной точкой
-const finalPoint = {
-  second: Math.round(duration),
-  wpm: Math.round(wpm),
-  raw: Math.round(cpm),  // CPM — это символы в минуту, то есть RAW
-  burst: Math.round(wpm) + 5,
-  errors: mistakesCount
-};
+  const finalSecond = Math.max(1, Math.round(duration));
+
+  const finalPoint = {
+    second: finalSecond,
+    wpm: Math.round(wpm),
+    raw: Math.round(cpm),
+    burst: Math.round(wpm),
+    errors: mistakesCount
+  };
 
 // Добавляем финальную точку, если её ещё нет
 setTypingHistory(prev => {
@@ -357,6 +355,12 @@ setTypingHistory(prev => {
   setPracticeProblemKeys(Object.keys(errors));
 };
 
+  useEffect(() => {
+    if (mode === 'time' && isActive && timeLeft === 0 && !stats) {
+      finishTest();
+    }
+  }, [timeLeft, mode, isActive, stats]);
+
   const handleInput = (e) => {
     const value = e.target.value;
     if (!isActive && value) startTest();
@@ -382,21 +386,69 @@ setTypingHistory(prev => {
       }
     } else if (currentCharIndex < currentWord.length) {
       const expectedChar = currentWord[currentCharIndex];
+
+      let newCorrectChars = correctChars;
+      let newMistakesCount = mistakesCount;
+
       if (lastChar === expectedChar) {
-        setCorrectChars(prev => prev + 1);
+        newCorrectChars = correctChars + 1;
+        setCorrectChars(newCorrectChars);
         setCombo(prev => prev + 1);
-        setLastInputTime(Date.now());
       } else {
-        setMistakesCount(prev => prev + 1);
+        newMistakesCount = mistakesCount + 1;
+        setMistakesCount(newMistakesCount);
         setCombo(0);
-        setLastInputTime(Date.now());
-        setErrors(prev => ({ ...prev, [expectedChar.toLowerCase()]: (prev[expectedChar.toLowerCase()] || 0) + 1 }));
+
+        setErrors(prev => ({
+          ...prev,
+          [expectedChar.toLowerCase()]: (prev[expectedChar.toLowerCase()] || 0) + 1
+        }));
       }
+
+      setLastInputTime(Date.now());
       setUserInput(value);
       setCurrentCharIndex(prev => prev + 1);
+
+      addTypingHistoryPoint(newCorrectChars, newMistakesCount);
     } else {
       e.target.value = userInput;
     }
+  };
+
+  const addTypingHistoryPoint = (newCorrectChars, newMistakesCount) => {
+    if (!startTime) return;
+
+    const elapsed = Math.max(1, Math.floor((Date.now() - startTime) / 1000));
+    const totalChars = newCorrectChars + newMistakesCount;
+
+    const currentRaw = totalChars > 0
+      ? Math.round(totalChars / (elapsed / 60))
+      : 0;
+
+    const currentWPM = Math.round(currentRaw / 5);
+
+    setTypingHistory(prev => {
+      const existingIndex = prev.findIndex(item => item.second === elapsed);
+
+      const point = {
+        second: elapsed,
+        wpm: currentWPM,
+        raw: currentRaw,
+        burst: currentWPM,
+        errors: newMistakesCount
+      };
+
+      if (existingIndex !== -1) {
+        const updated = [...prev];
+        updated[existingIndex] = {
+          ...point,
+          burst: Math.max(updated[existingIndex].burst || 0, currentWPM)
+        };
+        return updated;
+      }
+
+      return [...prev, point];
+    });
   };
 
   const renderTextWithHighlight = () => {
@@ -464,85 +516,6 @@ setTypingHistory(prev => {
     }
   }, [practiceKeys]);
 
-  // Запись реальной скорости каждую секунду
-useEffect(() => {
-  if (isActive && startTime) {
-      const recordInterval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const totalChars = correctChars + mistakesCount;
-      const currentWPM = totalChars > 0 ? Math.round((totalChars / (elapsed / 60)) / 5) : 0;  // слова в минуту
-      const currentRaw = totalChars > 0 ? Math.round(totalChars / (elapsed / 60)) : 0;        // символы в минуту (RAW)
-      
-      setTypingHistory(prev => {
-        // Обновляем последнюю запись или добавляем новую
-        if (prev.length > 0 && prev[prev.length - 1].second === elapsed) {
-          const updated = [...prev];
-          updated[updated.length - 1] = {
-            second: elapsed,
-            wpm: currentWPM,
-            raw: currentRaw,
-            burst: Math.max(prev[prev.length - 1].burst, currentWPM),
-            errors: mistakesCount
-          };
-          return updated;
-        }
-        return [...prev, {
-          second: elapsed,
-          wpm: currentWPM,
-          raw: currentRaw,
-          burst: currentWPM,
-          errors: mistakesCount
-        }];
-      });
-    }, 1000);
-    
-    return () => clearInterval(recordInterval);
-  }
-}, [isActive, startTime, correctChars, mistakesCount]);
-
-  // Добавьте этот useEffect после других
-// Запись реальной скорости КАЖДУЮ СЕКУНДУ (независимо от ошибок)
-useEffect(() => {
-  if (isActive && startTime) {
-    const recordInterval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      const totalChars = correctChars + mistakesCount;
-      
-      // WPM = слова в минуту (символы/5)
-      const currentWPM = totalChars > 0 && elapsed > 0 ? Math.round((totalChars / (elapsed / 60)) / 5) : 0;
-      // RAW = символы в минуту
-      const currentRAW = totalChars > 0 && elapsed > 0 ? Math.round(totalChars / (elapsed / 60)) : 0;
-      
-      setTypingHistory(prev => {
-        // Проверяем, есть ли уже запись на эту секунду
-        const existingIndex = prev.findIndex(item => item.second === elapsed);
-        
-        const newRecord = {
-          second: elapsed,
-          wpm: currentWPM,
-          raw: currentRAW,
-          burst: currentWPM,
-          errors: mistakesCount
-        };
-        
-        if (existingIndex !== -1) {
-          // Обновляем существующую запись
-          const updated = [...prev];
-          updated[existingIndex] = {
-            ...newRecord,
-            burst: Math.max(updated[existingIndex].burst, currentWPM)
-          };
-          return updated;
-        }
-        // Добавляем новую запись
-        return [...prev, newRecord];
-      });
-    }, 1000);
-    
-    return () => clearInterval(recordInterval);
-  }
-}, [isActive, startTime, correctChars, mistakesCount]);
-
   const currentWord = currentText[currentWordIndex];
   let nextChar = currentWord ? currentWord[currentCharIndex] : null;
   if (currentWord && currentCharIndex >= currentWord.length) nextChar = ' ';
@@ -578,10 +551,6 @@ useEffect(() => {
         <input ref={inputRef} type="text" value={userInput} onChange={handleInput}
           placeholder="Начните печатать... После каждого слова нажимайте ПРОБЕЛ"
           style={styles.input} autoFocus disabled={stats !== null} />
-        <div style={styles.nextWordHint}>
-          💡 Следующая буква: <strong style={{ color: '#ffd700' }}>{nextChar === ' ' ? 'ПРОБЕЛ' : nextChar || '✨'}</strong>
-          {' | '} <strong>Backspace</strong> – удалить
-        </div>
       </div>
 
       {stats && (

@@ -5,6 +5,21 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
 
   const [isShiftPressed, setIsShiftPressed] = useState(false);
 
+  const [isLaptopLayout, setIsLaptopLayout] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= 1200 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLaptopLayout(window.innerWidth <= 1200);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Значения по умолчанию (если тема не передана)
   const theme = keyboardTheme || {
     keyBg: '#2d2d3a',
@@ -277,7 +292,7 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
   const styles = {
     container: {
       background: 'rgba(0, 0, 0, 0.4)',
-      padding: '20px',
+      padding: '10px',
       borderRadius: '20px',
       marginTop: '20px',
       overflowX: 'auto'
@@ -302,7 +317,9 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
       display: 'flex',
       flexDirection: 'column',
       gap: '6px',
-      minWidth: '950px'
+      minWidth: '950px',
+      transform: isLaptopLayout ? 'scale(0.82)' : 'scale(1)',
+      transformOrigin: 'top center',
     },
     row: {
       display: 'flex',
@@ -345,7 +362,39 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
       alignItems: 'center',
       gap: '8px',
       fontSize: '12px'
-    }
+    },
+    trainingArea: {
+      display: 'flex',
+      alignItems: 'flex-start',
+      justifyContent: 'center',
+      gap: isLaptopLayout ? '10px' : '0',
+      width: '100%',
+    },
+    keyboardColumn: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      flexShrink: 0,
+    },
+    keyboardViewport: {
+      width: isLaptopLayout ? '780px' : '950px',
+      display: 'flex',
+      justifyContent: 'center',
+      overflow: 'visible',
+    },
+    sideHand: {
+      width: '170px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      paddingTop: '120px',
+      flexShrink: 0,
+      transform: 'scale(0.72)',
+      transformOrigin: 'top center',
+    },
+    bottomHands: {
+      width: '100%',
+    },
   };
 
   return (
@@ -362,48 +411,81 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
         </div>
       )}
       
-      <div style={styles.keyboard}>
-        {keyboardRows.map((row, rowIndex) => (
-          <div key={rowIndex} style={styles.row}>
-            {row.map((key, keyIndex) => {
-              const isNext = isNextKey(key);
-              let keyStyle = { ...styles.key };
-
-              // Размеры специальных клавиш
-              if (key.normal === 'Space') {
-                keyStyle = { ...keyStyle, ...styles.keySpace };
-              } else if (['Backspace', 'Enter', 'Shift', 'CapsLock', 'Tab'].includes(key.normal)) {
-                keyStyle = { ...keyStyle, ...styles.keyWide };
-              }
-
-              // Базовые цвета из темы
-              keyStyle.backgroundColor = theme.keyBg;
-              keyStyle.borderColor = theme.keyBorder;
-              keyStyle.color = theme.keyText;
-
-              // Подсветка следующей клавиши
-              if (isNext) {
-                keyStyle.backgroundColor = theme.highlightBg;
-                keyStyle.borderColor = '#fff';
-                keyStyle.color = theme.highlightText;
-                keyStyle.transform = 'scale(1.02)';
-                keyStyle.boxShadow = `0 0 20px ${theme.highlightBg}`;
-              }
-
-              return (
-                <div key={key.id || keyIndex} style={keyStyle}>
-                  {getDisplayText(key)}
-                </div>
-              );
-            })}
+      <div style={styles.trainingArea}>
+        {isLaptopLayout && (
+          <div style={styles.sideHand}>
+            <HandsGuide
+              side="left"
+              nextChar={nextChar}
+              language={language}
+              highlightColor={theme.highlightBg}
+              shiftKeyId={nextKeyInfo?.shiftKeyId}
+            />
           </div>
-        ))}
-        <HandsGuide
-          nextChar={nextChar}
-          language={language}
-          highlightColor={theme.highlightBg}
-          shiftKeyId={nextKeyInfo?.shiftKeyId}
-        />
+        )}
+
+        <div style={styles.keyboardColumn}>
+          <div style={styles.keyboardViewport}>
+            <div style={styles.keyboard}>
+              {keyboardRows.map((row, rowIndex) => (
+                <div key={rowIndex} style={styles.row}>
+                  {row.map((key, keyIndex) => {
+                    const isNext = isNextKey(key);
+                    let keyStyle = { ...styles.key };
+
+                    if (key.normal === 'Space') {
+                      keyStyle = { ...keyStyle, ...styles.keySpace };
+                    } else if (['Backspace', 'Enter', 'Shift', 'CapsLock', 'Tab'].includes(key.normal)) {
+                      keyStyle = { ...keyStyle, ...styles.keyWide };
+                    }
+
+                    keyStyle.backgroundColor = theme.keyBg;
+                    keyStyle.borderColor = theme.keyBorder;
+                    keyStyle.color = theme.keyText;
+
+                    if (isNext) {
+                      keyStyle.backgroundColor = theme.highlightBg;
+                      keyStyle.borderColor = '#fff';
+                      keyStyle.color = theme.highlightText;
+                      keyStyle.transform = 'scale(1.02)';
+                      keyStyle.boxShadow = `0 0 20px ${theme.highlightBg}`;
+                    }
+
+                    return (
+                      <div key={key.id || keyIndex} style={keyStyle}>
+                        {getDisplayText(key)}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {!isLaptopLayout && (
+            <div style={styles.bottomHands}>
+              <HandsGuide
+                side="both"
+                nextChar={nextChar}
+                language={language}
+                highlightColor={theme.highlightBg}
+                shiftKeyId={nextKeyInfo?.shiftKeyId}
+              />
+            </div>
+          )}
+        </div>
+
+        {isLaptopLayout && (
+          <div style={styles.sideHand}>
+            <HandsGuide
+              side="right"
+              nextChar={nextChar}
+              language={language}
+              highlightColor={theme.highlightBg}
+              shiftKeyId={nextKeyInfo?.shiftKeyId}
+            />
+          </div>
+        )}
       </div>
       
       <div style={styles.legend}>

@@ -37,21 +37,54 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
     setVisibleLines(prev => ({ ...prev, [line]: !prev[line] }));
   };
 
-  // Формируем данные для графика из typingHistory
-  let labels = typingHistory.map(item => `${item.second}c`);
-  let wpmData = typingHistory.map(item => item.wpm);
-  let rawData = typingHistory.map(item => item.raw);
-  let burstData = typingHistory.map(item => item.burst);
-  let errorsData = typingHistory.map(item => item.errors);
-  
-  // Если данных нет, добавляем нулевую точку
-  if (labels.length === 0) {
-    labels = ['0c'];
-    wpmData = [0];
-    rawData = [0];
-    burstData = [0];
-    errorsData = [0];
+  // Формируем данные для графика с шагом 1 секунда
+  const maxSecondFromHistory = typingHistory.length > 0
+    ? Math.max(...typingHistory.map(item => Math.round(item.second || 0)))
+    : 0;
+
+  const totalSeconds = Math.max(
+    1,
+    Math.round(stats.duration || 0),
+    maxSecondFromHistory
+  );
+
+  const historyBySecond = {};
+  typingHistory.forEach(item => {
+    const second = Math.round(item.second || 0);
+    historyBySecond[second] = item;
+  });
+
+  let lastPoint = {
+    wpm: 0,
+    raw: 0,
+    burst: 0,
+    errors: 0
+  };
+
+  const normalizedHistory = [];
+
+  for (let second = 1; second <= totalSeconds; second++) {
+    if (historyBySecond[second]) {
+      lastPoint = {
+        ...lastPoint,
+        ...historyBySecond[second]
+      };
+    }
+
+    normalizedHistory.push({
+      second,
+      wpm: lastPoint.wpm,
+      raw: lastPoint.raw,
+      burst: lastPoint.burst,
+      errors: lastPoint.errors
+    });
   }
+
+  let labels = normalizedHistory.map(item => `${item.second}c`);
+  let wpmData = normalizedHistory.map(item => item.wpm);
+  let rawData = normalizedHistory.map(item => item.raw);
+  let burstData = normalizedHistory.map(item => item.burst);
+  let errorsData = normalizedHistory.map(item => item.errors);
 
   const chartData = {
     labels: labels,
@@ -137,6 +170,11 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
         title: {
           display: true,
           text: 'время (секунды)',
+          color: '#aaa'
+        },
+        ticks: {
+          autoSkip: false,
+          maxRotation: 0,
           color: '#aaa'
         },
         grid: { color: 'rgba(255,255,255,0.1)' }

@@ -8,41 +8,52 @@ const ShopPage = ({ userData, updateUserData }) => {
   const activeSkins = userData.activeSkins || {};
   const activeWardrobe = userData.activeWardrobe || {};
 
+  const wardrobeCategories = ['head', 'body', 'arms', 'legs', 'shoes', 'hat'];
+  const isWardrobeItem = (item) => wardrobeCategories.includes(item.category);
+
   const handleBuyOrActivate = (item) => {
-    if (purchasedItems.includes(item.id)) {
-      // Для одежды обновляем activeWardrobe
-      if (['head', 'body', 'arms', 'legs', 'shoes', 'hat'].includes(item.category)) {
+    const purchased = isPurchased(item);
+
+    // Если предмет уже куплен или он дефолтный — просто активируем
+    if (purchased) {
+      if (isWardrobeItem(item)) {
         const newWardrobe = { ...activeWardrobe, [item.slot]: item.id };
         updateUserData({ ...userData, activeWardrobe: newWardrobe });
       } else {
-        // Обои/клавиатуры
         const newActive = { ...activeSkins, [item.category]: item.id };
         updateUserData({ ...userData, activeSkins: newActive });
       }
+
+      return;
+    }
+
+    // Если не куплен — покупаем
+    if (userData.coins < item.price) {
+      alert('Недостаточно монет!');
+      return;
+    }
+
+    const newCoins = userData.coins - item.price;
+    const newPurchased = [...purchasedItems, item.id];
+
+    if (isWardrobeItem(item)) {
+      const newWardrobe = { ...activeWardrobe, [item.slot]: item.id };
+
+      updateUserData({
+        ...userData,
+        coins: newCoins,
+        purchasedItems: newPurchased,
+        activeWardrobe: newWardrobe
+      });
     } else {
-      if (userData.coins < item.price) {
-        alert('Недостаточно монет!');
-        return;
-      }
-      const newCoins = userData.coins - item.price;
-      const newPurchased = [...purchasedItems, item.id];
-      if (['head', 'body', 'arms', 'legs', 'shoes', 'hat'].includes(item.category)) {
-        const newWardrobe = { ...activeWardrobe, [item.slot]: item.id };
-        updateUserData({
-          ...userData,
-          coins: newCoins,
-          purchasedItems: newPurchased,
-          activeWardrobe: newWardrobe
-        });
-      } else {
-        const newActive = { ...activeSkins, [item.category]: item.id };
-        updateUserData({
-          ...userData,
-          coins: newCoins,
-          purchasedItems: newPurchased,
-          activeSkins: newActive
-        });
-      }
+      const newActive = { ...activeSkins, [item.category]: item.id };
+
+      updateUserData({
+        ...userData,
+        coins: newCoins,
+        purchasedItems: newPurchased,
+        activeSkins: newActive
+      });
     }
   };
 
@@ -51,13 +62,26 @@ const ShopPage = ({ userData, updateUserData }) => {
     : shopItems.filter(item => item.category === filterCategory);
 
   const isActive = (item) => {
-    if (['head', 'body', 'arms', 'legs', 'shoes', 'hat'].includes(item.category)) {
-      return activeWardrobe[item.slot] === item.id;
+    if (isWardrobeItem(item)) {
+      const activeItemId = activeWardrobe[item.slot];
+
+      if (!activeItemId && item.default) {
+        return true;
+      }
+
+      return activeItemId === item.id;
     }
-    return activeSkins[item.category] === item.id;
+
+    const activeSkinId = activeSkins[item.category];
+
+    if (!activeSkinId && item.default) {
+      return true;
+    }
+
+    return activeSkinId === item.id;
   };
 
-  const isPurchased = (item) => purchasedItems.includes(item.id);
+  const isPurchased = (item) => item.default || item.price === 0 || purchasedItems.includes(item.id);
 
   const styles = {
     container: { padding: '2rem', maxWidth: '1200px', margin: '0 auto' },
@@ -68,7 +92,8 @@ const ShopPage = ({ userData, updateUserData }) => {
     shopGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' },
     itemCard: { background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '1.5rem', textAlign: 'center', cursor: 'pointer', border: '2px solid transparent', transition: 'transform 0.2s' },
     itemCardActive: { border: '2px solid #ffd700', boxShadow: '0 0 15px rgba(255,215,0,0.3)' },
-    itemPreview: { width: '100%', height: '200px', borderRadius: '12px', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+    itemPreview: { width: '100%', height: '220px', borderRadius: '12px', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'},
+    characterPreviewWrapper: { height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '70px', boxSizing: 'border-box', transform: 'scale(0.9)', transformOrigin: 'center'},
     itemName: { fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#ffd700' },
     itemPrice: { fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' },
     btn: { padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', width: '100%' },
@@ -93,11 +118,28 @@ const ShopPage = ({ userData, updateUserData }) => {
         </div>
       );
     } else if (['head', 'body', 'arms', 'legs', 'shoes', 'hat'].includes(item.category)) {
-      // Временное применение этого предмета для предпросмотра
-      const previewWardrobe = { ...activeWardrobe, [item.slot]: item.id };
+      const defaultPreviewWardrobe = {
+        head: 'head_default',
+        body: 'body_default',
+        arms: 'arms_default',
+        legs: 'legs_default',
+        shoes: 'shoes_default',
+        hat: 'hat_default',
+      };
+
+      const previewWardrobe = {
+        ...defaultPreviewWardrobe,
+        [item.slot]: item.id,
+      };
+
       return (
         <div style={{ ...styles.itemPreview, background: 'rgba(0,0,0,0.2)' }}>
-          <Character activeWardrobe={previewWardrobe} />
+          <div style={styles.characterPreviewWrapper}>
+              <Character
+              activeWardrobe={previewWardrobe}
+              hideHoodieHood={item.id === 'body_hoodie'}
+            />
+          </div>
         </div>
       );
     }

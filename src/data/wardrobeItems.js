@@ -17,22 +17,6 @@ const wardrobeItems = {
     render: 'hair',
     color: '#f1c40f',
   },
-  'head_cap': {
-    id: 'head_cap',
-    name: 'Бейсболка',
-    slot: 'head',
-    price: 200,
-    render: 'cap',
-    color: '#e74c3c',
-  },
-  'head_astronaut': {
-    id: 'head_astronaut',
-    name: 'Шлем астронавта',
-    slot: 'head',
-    price: 500,
-    render: 'astronaut_helmet',
-    color: '#ecf0f1',
-  },
 
   // ========== ТЕЛО (body) ==========
   'body_default': {
@@ -167,6 +151,22 @@ const wardrobeItems = {
     price: 350,
     render: 'top_hat',
     color: '#2c3e50',
+  },
+  'head_cap': {
+    id: 'head_cap',
+    name: 'Бейсболка',
+    slot: 'hat',
+    price: 200,
+    render: 'cap',
+    color: '#e74c3c',
+  },
+  'head_astronaut': {
+    id: 'head_astronaut',
+    name: 'Шлем астронавта',
+    slot: 'hat',
+    price: 500,
+    render: 'astronaut_helmet',
+    color: '#ecf0f1',
   },
 };
 

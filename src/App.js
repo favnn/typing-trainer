@@ -132,7 +132,7 @@ function App() {
   return (
     <div className="App">
       <nav className="navbar">
-<img src="/logo.png" alt="Дабл ю Дабл ю" style={{ height: '80px' }} />        <div className="nav-links">
+<img src="/logo.png" alt="Дабл ю Дабл ю" className="nav-logo" />        <div className="nav-links">
           <button onClick={() => setCurrentPage('home')}>Главная</button>
           <button onClick={() => setCurrentPage('test')}>Тест</button>
           <button onClick={() => setCurrentPage('lessons')}>Уроки</button>
