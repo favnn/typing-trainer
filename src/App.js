@@ -34,16 +34,32 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const resetBodyBackground = () => {
+      document.body.style.background = '';
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundSize = '';
+      document.body.style.backgroundPosition = '';
+      document.body.style.backgroundRepeat = '';
+      document.body.style.backgroundAttachment = '';
+      document.body.style.backgroundColor = '';
+    };
+
+    resetBodyBackground();
+
     if (userData?.activeSkins?.background) {
-      const bgItem = shopItems.find(item => item.id === userData.activeSkins.background);
-      if (bgItem) {
-        document.body.style.background = bgItem.style.background;
+      const bgItem = shopItems.find(
+        item => item.id === userData.activeSkins.background
+      );
+
+      if (bgItem?.style) {
+        Object.assign(document.body.style, bgItem.style);
         document.body.style.backgroundAttachment = 'fixed';
-        return;
       }
     }
-    document.body.style.background = '';
-    document.body.style.backgroundAttachment = '';
+
+    return () => {
+      resetBodyBackground();
+    };
   }, [userData?.activeSkins?.background]);
 
   const loadUserData = async (username) => {

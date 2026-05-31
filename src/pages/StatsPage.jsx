@@ -21,7 +21,7 @@ const StatsPage = ({ userData, onPracticeErrors }) => {
       marginBottom: '2rem'
     },
     statCard: {
-      background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+      background: '#2a2a3b',
       borderRadius: '20px',
       padding: '1.5rem',
       textAlign: 'center',
@@ -45,7 +45,7 @@ const StatsPage = ({ userData, onPracticeErrors }) => {
       color: '#ffd700'
     },
     problemKeysSection: {
-      background: 'rgba(255, 255, 255, 0.05)',
+      background: '#2a2a3b',
       borderRadius: '20px',
       padding: '1.5rem',
       marginBottom: '2rem'

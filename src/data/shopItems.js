@@ -1,4 +1,8 @@
 import wardrobeItems from './wardrobeItems';
+import bg67 from '../assets/bg/67-bg.png';
+import bgCheremsha from '../assets/bg/cheremsha-bg.webp';
+import bgSigma from '../assets/bg/sigma-bg.jpg';
+import bgFnaf from '../assets/bg/fnaf-bg.jpg';
 
 const shopItems = [
   // ========== ОБОИ ==========
@@ -21,6 +25,58 @@ const shopItems = [
   { 
     id: 'bg_galaxy', name: 'Галактика', category: 'background', price: 500,
     style: { background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)' }
+  },
+  {
+    id: 'bg_67',
+    name: 'Фон 67',
+    category: 'background',
+    price: 420,
+    style: {
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url(${bg67})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor: '#1e1e2f'
+    }
+  },
+  {
+    id: 'bg_cheremsha',
+    name: 'Черемша мем',
+    category: 'background',
+    price: 420,
+    style: {
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.10), rgba(0,0,0,0.10)), url(${bgCheremsha})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor: '#fee7cf'
+    }
+  },
+  {
+    id: 'bg_sigma',
+    name: 'Сигма',
+    category: 'background',
+    price: 500,
+    style: {
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)), url(${bgSigma})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor: '#101827'
+    }
+  },
+    {
+    id: 'bg_fnaf',
+    name: 'Fnaf',
+    category: 'background',
+    price: 500,
+    style: {
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)), url(${bgFnaf})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor: '#101827'
+    }
   },
 
   // ========== РАСКЛАДКИ ==========

@@ -90,7 +90,7 @@ const ShopPage = ({ userData, updateUserData }) => {
     filterBtn: { padding: '8px 16px', background: '#3a3a4a', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
     filterBtnActive: { background: '#4caf50' },
     shopGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' },
-    itemCard: { background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '1.5rem', textAlign: 'center', cursor: 'pointer', border: '2px solid transparent', transition: 'transform 0.2s' },
+    itemCard: { background: '#2a2a3b', borderRadius: '16px', padding: '1.5rem', textAlign: 'center', cursor: 'pointer', border: '2px solid transparent', transition: 'transform 0.2s' },
     itemCardActive: { border: '2px solid #ffd700', boxShadow: '0 0 15px rgba(255,215,0,0.3)' },
     itemPreview: { width: '100%', height: '220px', borderRadius: '12px', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'},
     characterPreviewWrapper: { height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '70px', boxSizing: 'border-box', transform: 'scale(0.9)', transformOrigin: 'center'},
@@ -105,7 +105,7 @@ const ShopPage = ({ userData, updateUserData }) => {
 
   const renderPreview = (item) => {
     if (item.category === 'background') {
-      return <div style={{ ...styles.itemPreview, background: item.style.background }} />;
+      return <div style={{ ...styles.itemPreview, ...item.style }} />;
     } else if (item.category === 'keyboard') {
       return (
         <div style={{ ...styles.itemPreview, background: '#1e1e2f', flexDirection: 'column', gap: '10px' }}>

@@ -45,6 +45,31 @@ const wardrobeItems = {
     color: '#2c3e50',
   },
 
+  'body_67': {
+    id: 'body_67',
+    name: 'Футболка 67',
+    slot: 'body',
+    price: 420,
+    render: 'tshirt_67',
+    color: '#1d4ed8',
+  },
+  'body_cheremsha': {
+    id: 'body_cheremsha',
+    name: 'Футболка Черемша',
+    slot: 'body',
+    price: 420,
+    render: 'tshirt_cheremsha',
+    color: '#fee7cf',
+  },
+  'body_sigma': {
+    id: 'body_sigma',
+    name: 'Футболка Сигма',
+    slot: 'body',
+    price: 500,
+    render: 'tshirt_sigma',
+    color: '#575757',
+  },
+
   // ========== РУКИ (arms) ==========
   'arms_default': {
     id: 'arms_default',

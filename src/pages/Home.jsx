@@ -20,13 +20,13 @@ const Home = ({ userData }) => {
       justifyContent: 'center'
     },
     rules: {
-      background: 'rgba(255,255,255,0.05)',
+      background: '#2a2a3b',
       padding: '1.5rem',
       borderRadius: '16px',
       marginBottom: '2rem'
     },
     progress: {
-      background: 'rgba(255,255,255,0.05)',
+      background: '#2a2a3b',
       padding: '1.5rem',
       borderRadius: '16px'
     },

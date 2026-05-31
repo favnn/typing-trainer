@@ -6,12 +6,12 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
   const [isShiftPressed, setIsShiftPressed] = useState(false);
 
   const [isLaptopLayout, setIsLaptopLayout] = useState(
-    typeof window !== 'undefined' ? window.innerWidth <= 1200 : false
+    typeof window !== 'undefined' ? window.innerWidth <= 1400 : false
   );
 
   useEffect(() => {
     const handleResize = () => {
-      setIsLaptopLayout(window.innerWidth <= 1200);
+      setIsLaptopLayout(window.innerWidth <= 1400);
     };
 
     handleResize();
@@ -291,7 +291,7 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
 
   const styles = {
     container: {
-      background: 'rgba(0, 0, 0, 0.4)',
+      background: '#2a2a3b',
       padding: '10px',
       borderRadius: '20px',
       marginTop: '20px',
