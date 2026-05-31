@@ -1,6 +1,8 @@
 import React from 'react';
 import characterBase from '../data/characterBase';
 import wardrobeItems from '../data/wardrobeItems';
+import cheremshaCat from '../assets/cheremsha-cat.png';
+import sigmaImg from '../assets/sigma.jpg'
 
 const Character = ({ activeWardrobe }) => {
   const getActive = (slot) => {
@@ -420,6 +422,54 @@ const Character = ({ activeWardrobe }) => {
       zIndex: 8,
       borderRadius: '2px',
     },
+    bodyPrintBase: {
+      position: 'absolute',
+      left: '50%',
+      top: '32px',
+      transform: 'translateX(-50%)',
+      zIndex: 5,
+      pointerEvents: 'none',
+      userSelect: 'none',
+    },
+    bodyPrint67: {
+      width: '44px',
+      height: '34px',
+      borderRadius: '9px',
+      color: '#ffffff',
+      fontSize: '14px',
+      fontWeight: 900,
+      letterSpacing: '1px',
+      lineHeight: '34px',
+      textAlign: 'center',
+    },
+    bodyPrintCheremsha: {
+      width: '50px',
+      height: '36px',
+      borderRadius: '9px',
+      overflow: 'hidden',
+    },
+    bodyPrintCheremshaImage: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      display: 'block',
+    },
+    bodyPrintSigmaImage: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      display: 'block',
+    },
+    bodyPrintSigma: {
+      width: '50px',
+      height: '36px',
+      borderRadius: '9px',
+      overflow: 'hidden',
+    },
+    bodyPrintSigmaIcon: {
+      fontSize: '14px',
+      lineHeight: 1,
+    },
   };
 
   // Рендер волос/шапок
@@ -436,6 +486,44 @@ const Character = ({ activeWardrobe }) => {
     return null;
   };
 
+  const renderBodyDecoration = () => {
+    if (bodyItem.render === 'tshirt_67') {
+      return (
+        <div style={{ ...styles.bodyPrintBase, ...styles.bodyPrint67 }}>
+          67
+        </div>
+      );
+    }
+
+    if (bodyItem.render === 'tshirt_cheremsha') {
+      return (
+        <div style={{ ...styles.bodyPrintBase, ...styles.bodyPrintCheremsha }}>
+          <img
+            src={cheremshaCat}
+            alt="Черемша"
+            style={styles.bodyPrintCheremshaImage}
+            draggable={false}
+          />
+        </div>
+      );
+    }
+
+    if (bodyItem.render === 'tshirt_sigma') {
+      return (
+        <div style={{ ...styles.bodyPrintBase, ...styles.bodyPrintSigma }}>
+          <img
+            src={sigmaImg}
+            alt="Сигма"
+            style={styles.bodyPrintSigmaImage}
+            draggable={false}
+          />
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   // Тело с капюшоном
   const renderBody = () => {
     if (bodyItem.render === 'hoodie') {
@@ -444,13 +532,13 @@ const Character = ({ activeWardrobe }) => {
           {/* Капюшон за головой */}
           <div style={styles.hoodieHoodBack} />
           {/* Тело */}
-          <div style={styles.body} />
+          <div style={styles.body}>{renderBodyDecoration()}</div>
         </>
       );
     }
     return (
       <>
-        <div style={styles.body} />
+        <div style={styles.body}>{renderBodyDecoration()}</div>
         <div style={styles.collar} />
       </>
     );

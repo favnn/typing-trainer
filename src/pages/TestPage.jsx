@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { russianWords, englishWords, quotes, punctuationMarks } from '../data/dictionaries';
+import { russianWords, englishWords, quotes, punctuationMarks, codeSnippetsByDifficulty } from '../data/dictionaries';
 import KeyboardGuide from '../components/KeyboardGuide';
 import StatsDashboard from '../components/StatsDashboard';
 import ComboSystem from '../components/ComboSystem';
@@ -7,6 +7,7 @@ import ComboSystem from '../components/ComboSystem';
 const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeComplete, keyboardTheme }) => {
   const [mode, setMode] = useState('words');
   const [wordCount, setWordCount] = useState(10);
+  const [codeDifficulty, setCodeDifficulty] = useState('easy');
   const [punctuation, setPunctuation] = useState(false);
   const [language, setLanguage] = useState('russian');
   const [currentText, setCurrentText] = useState([]);
@@ -29,6 +30,11 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
   const [typingHistory, setTypingHistory] = useState([]); // массив для хранения показателей по секундам
 
   const dictionary = language === 'russian' ? russianWords : englishWords;
+  const codeDifficultyLabels = {
+    easy: 'Лёгкая',
+    medium: 'Средняя',
+    hard: 'Сложная'
+  };
 
   const styles = {
     container: {
@@ -146,6 +152,13 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
   };
 
   const generateText = () => {
+    if (mode === 'code') {
+      const snippets = codeSnippetsByDifficulty[codeDifficulty] || codeSnippetsByDifficulty.easy;
+      const randomSnippet = snippets[Math.floor(Math.random() * snippets.length)];
+
+      return [randomSnippet];
+    }
+
     if (mode === 'quote') {
       const availableQuotes = quotes.filter(q => q.lang === language);
       if (availableQuotes.length === 0) {
@@ -221,7 +234,7 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
 
   const endTime = Date.now();
   const duration = mode === 'time' ? 30 : (endTime - startTime) / 1000;
-  const totalWords = currentWordIndex;
+  const totalWords = mode === 'code' ? 1 : currentWordIndex;
   const totalChars = correctChars + mistakesCount;
   const accuracy = totalChars > 0 ? (correctChars / totalChars) * 100 : 0;
   const wpm = totalWords > 0 ? (totalWords / (duration / 60)) : 0;
@@ -316,7 +329,7 @@ setTypingHistory(prev => {
     cpm: Math.round(cpm),
     accuracy: Math.round(accuracy),
     duration: Math.round(duration),
-    type: `${mode === 'time' ? 'Время' : mode === 'quote' ? 'Цитата' : 'Слова'} ${language === 'russian' ? 'Рус' : 'Eng'}${punctuation ? ' + пунктуация' : ''}`,
+    type: `${mode === 'time' ? 'Время' : mode === 'quote' ? 'Цитата' : mode === 'code' ? `Код (${codeDifficultyLabels[codeDifficulty]})` : 'Слова'} ${mode === 'code' ? 'Eng' : language === 'russian' ? 'Рус' : 'Eng'}${punctuation && mode !== 'code' ? ' + пунктуация' : ''}`,
     date: new Date().toLocaleDateString(),
     problemKeys: problemKeys,
     combo: combo,
@@ -366,6 +379,57 @@ setTypingHistory(prev => {
     if (!isActive && value) startTest();
     const currentWord = currentText[currentWordIndex];
     if (!currentWord) { finishTest(); return; }
+
+    if (mode === 'code') {
+      if (value.length < userInput.length) {
+        setUserInput(value);
+        setCurrentCharIndex(value.length);
+        setLastInputTime(Date.now());
+        return;
+      }
+
+      if (value.length > currentWord.length) {
+        e.target.value = userInput;
+        return;
+      }
+
+      const lastChar = value[value.length - 1];
+
+      if (lastChar) {
+        const expectedChar = currentWord[value.length - 1];
+
+        let newCorrectChars = correctChars;
+        let newMistakesCount = mistakesCount;
+
+        if (lastChar === expectedChar) {
+          newCorrectChars = correctChars + 1;
+          setCorrectChars(newCorrectChars);
+          setCombo(prev => prev + 1);
+        } else {
+          newMistakesCount = mistakesCount + 1;
+          setMistakesCount(newMistakesCount);
+          setCombo(0);
+
+          setErrors(prev => ({
+            ...prev,
+            [expectedChar.toLowerCase()]: (prev[expectedChar.toLowerCase()] || 0) + 1
+          }));
+        }
+
+        setLastInputTime(Date.now());
+        setUserInput(value);
+        setCurrentCharIndex(value.length);
+        addTypingHistoryPoint(newCorrectChars, newMistakesCount);
+      }
+
+      if (value === currentWord) {
+        setTimeout(() => {
+          finishTest();
+        }, 100);
+      }
+
+      return;
+    }
     if (value.length < userInput.length) {
       setUserInput(value);
       setCurrentCharIndex(prev => Math.max(0, prev - 1));
@@ -469,7 +533,26 @@ setTypingHistory(prev => {
               } else {
                 charStyle = styles.charPending;
               }
-              return <span key={charIdx} style={charStyle}>{char}</span>;
+              const isSpace = char === ' ';
+
+              return (
+                <span
+                  key={charIdx}
+                  style={{
+                    ...charStyle,
+                    ...(isSpace
+                      ? {
+                          display: 'inline-block',
+                          width: '14px',
+                          backgroundColor: 'transparent',
+                          borderBottom: 'none'
+                        }
+                      : {})
+                  }}
+                >
+                  {isSpace ? '\u00A0' : char}
+                </span>
+              );
             })}
           </span>
         );
@@ -489,7 +572,7 @@ setTypingHistory(prev => {
     return selected;
   };
 
-  useEffect(() => { resetTest(); }, [mode, wordCount, punctuation, language]);
+  useEffect(() => { resetTest(); }, [mode, wordCount, codeDifficulty, punctuation, language]);
   useEffect(() => {
     if (inputRef.current && !stats) inputRef.current.focus();
   }, [currentText, currentWordIndex, stats]);
@@ -518,7 +601,7 @@ setTypingHistory(prev => {
 
   const currentWord = currentText[currentWordIndex];
   let nextChar = currentWord ? currentWord[currentCharIndex] : null;
-  if (currentWord && currentCharIndex >= currentWord.length) nextChar = ' ';
+  if (currentWord && currentCharIndex >= currentWord.length) nextChar = mode === 'code' ? null : ' ';
 
   return (
     <div style={styles.container}>
@@ -527,6 +610,7 @@ setTypingHistory(prev => {
           <option value="words">Слова</option>
           <option value="time">Время (30с)</option>
           <option value="quote">Цитата</option>
+          <option value="code">Код</option>
         </select>
         {mode === 'words' && (
           <select style={styles.select} value={wordCount} onChange={(e) => setWordCount(Number(e.target.value))}>
@@ -535,8 +619,17 @@ setTypingHistory(prev => {
             <option value={50}>50 слов</option>
           </select>
         )}
-        <button style={{ ...styles.btn, ...(punctuation ? styles.btnActive : {}) }} onClick={() => setPunctuation(!punctuation)}>!? Пунктуация</button>
-        <button style={styles.btn} onClick={() => setLanguage(language === 'russian' ? 'english' : 'russian')}>{language === 'russian' ? '🇷🇺 RU' : '🇬🇧 EN'}</button>
+        {mode === 'code' && (
+          <select style={styles.select} value={codeDifficulty} onChange={(e) => setCodeDifficulty(e.target.value)}>
+            <option value="easy">Лёгкая</option>
+            <option value="medium">Средняя</option>
+            <option value="hard">Сложная</option>
+          </select>
+        )}
+        {mode !== 'code' && (
+          <button style={{ ...styles.btn, ...(punctuation ? styles.btnActive : {}) }} onClick={() => setPunctuation(!punctuation)}>!? Пунктуация</button>
+        )}
+        <button style={styles.btn} onClick={() => setLanguage(language === 'russian' ? 'english' : 'russian')} disabled={mode === 'code'}>{mode === 'code' ? '💻 EN код' : language === 'russian' ? '🇷🇺 RU' : '🇬🇧 EN'}</button>
         <button style={{ ...styles.btn, background: '#f44336' }} onClick={resetTest}>🔄 Сброс</button>
       </div>
 
@@ -545,11 +638,11 @@ setTypingHistory(prev => {
       <div style={styles.typingArea}>
         <div style={styles.textToType}>{renderTextWithHighlight()}</div>
         <div style={styles.progress}>
-          {mode !== 'time' ? `Слово ${currentWordIndex + 1} из ${currentText.length}` : `Напечатано слов: ${currentWordIndex} | Осталось: ${timeLeft} сек`}
+          {mode !== 'time' ? `${mode === 'code' ? 'Элемент кода' : 'Слово'} ${currentWordIndex + 1} из ${currentText.length}` : `Напечатано слов: ${currentWordIndex} | Осталось: ${timeLeft} сек`}
           {' | '}✅ {correctChars} | ❌ {mistakesCount} | 🔥 x{combo}
         </div>
         <input ref={inputRef} type="text" value={userInput} onChange={handleInput}
-          placeholder="Начните печатать... После каждого слова нажимайте ПРОБЕЛ"
+          placeholder={mode === 'code' ? 'Печатай код... Тест завершится автоматически' : 'Начните печатать... После каждого слова нажимайте ПРОБЕЛ'}
           style={styles.input} autoFocus disabled={stats !== null} />
       </div>
 
@@ -584,7 +677,7 @@ setTypingHistory(prev => {
       {isActive && <ComboSystem combo={combo} lastAccuracy={Math.round((correctChars / (correctChars + mistakesCount)) * 100)} isActive={isActive} />}
       {
         !stats && (
-          <KeyboardGuide nextChar={nextChar}keyboardTheme={keyboardTheme} language={language}/>
+          <KeyboardGuide nextChar={nextChar} keyboardTheme={keyboardTheme} language={mode === 'code' ? 'english' : language} />
         )
       }
     </div>

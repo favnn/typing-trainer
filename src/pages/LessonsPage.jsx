@@ -22,7 +22,7 @@ const LessonsPage = ({ userData, updateUserData, keyboardTheme }) => {
     progressBarContainer: { background: '#2d2d3a', borderRadius: '20px', padding: '0.5rem', marginBottom: '1rem', position: 'relative' },
     progressBar: { background: '#4caf50', height: '30px', borderRadius: '15px', transition: 'width 0.3s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' },
     themesList: { display: 'flex', flexDirection: 'column', gap: '1.5rem' },
-    themeCard: { background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '1rem' },
+    themeCard: { background: '#2a2a3b', borderRadius: '16px', padding: '1rem' },
     themeTitle: { marginBottom: '1rem', color: '#ffd700' },
     lessonsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '10px' },
     lessonBtn: { background: '#3a3a4a', border: 'none', color: 'white', padding: '10px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' },

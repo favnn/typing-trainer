@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -24,12 +24,39 @@ ChartJS.register(
 );
 
 const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
+  const chartScrollRef = useRef(null);
+  const dashboardRef = useRef(null);
+
   const [visibleLines, setVisibleLines] = useState({
     wpm: true,
     raw: true,
     burst: true,
     errors: true
   });
+
+  useEffect(() => {
+    if (!stats) return;
+
+    const timerId = setTimeout(() => {
+      dashboardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
+
+    return () => clearTimeout(timerId);
+  }, [stats]);
+
+  useEffect(() => {
+    if (!stats || !chartScrollRef.current) return;
+
+    const timerId = setTimeout(() => {
+      const chartContainer = chartScrollRef.current;
+      chartContainer.scrollTo({
+        left: chartContainer.scrollWidth,
+        behavior: 'smooth'
+      });
+    }, 100);
+
+    return () => clearTimeout(timerId);
+  }, [stats, typingHistory]);
 
   if (!stats) return null;
 
@@ -85,6 +112,7 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
   let rawData = normalizedHistory.map(item => item.raw);
   let burstData = normalizedHistory.map(item => item.burst);
   let errorsData = normalizedHistory.map(item => item.errors);
+  const chartWidth = Math.max(620, labels.length * 42);
 
   const chartData = {
     labels: labels,
@@ -238,6 +266,7 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       flexWrap: 'wrap',
       gap: '1rem',
       marginBottom: '1rem',
+      justifyContent: 'center',
       padding: '0.5rem',
       background: 'rgba(0,0,0,0.3)',
       borderRadius: '12px'
@@ -265,7 +294,7 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       fontSize: '0.8rem',
       border: '1px solid rgba(244, 67, 54, 0.3)'
     },
-    chartContainer: { margin: '1rem 0' }
+    chartContainer: { margin: '1rem 0', overflowX: 'auto', paddingBottom: '0.4rem', scrollBehavior: 'smooth' }
   };
 
   const consistency = stats.accuracy > 0 
@@ -282,7 +311,7 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
   );
 
   return (
-    <div style={styles.container}>
+    <div ref={dashboardRef} style={styles.container}>
       {title && <h3 style={styles.title}>{title}</h3>}
       
       <div style={styles.mainStats}>
@@ -299,6 +328,8 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
           <div style={styles.mainStatLabel}>raw</div>
         </div>
       </div>
+
+      <Glossary />
       
       <div style={styles.legend}>
         <button 
@@ -327,8 +358,10 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
         </button>
       </div>
       
-      <div style={styles.chartContainer}>
-        <Line data={chartData} options={chartOptions} height={150} />
+      <div ref={chartScrollRef} style={styles.chartContainer}>
+        <div style={{ minWidth: `${chartWidth}px` }}>
+          <Line data={chartData} options={chartOptions} height={150} />
+        </div>
       </div>
       
       <div style={styles.statsGrid}>
@@ -374,8 +407,6 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
           <span style={styles.bottomStatValue}>{consistency}%</span>
         </div>
       </div>
-      
-      <Glossary />
       
       {stats.problemKeys && stats.problemKeys.length > 0 && (
         <div style={styles.problemKeys}>

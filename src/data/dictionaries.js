@@ -32,6 +32,62 @@ export const englishWords = [
   'south', 'west', 'east', 'mountain', 'river', 'sea', 'ocean', 'forest', 'sky', 'cloud'
 ];
 
+export const codeSnippetsByDifficulty = {
+  easy: [
+    'let lives = 3;',
+    'let score = 0;',
+    'const speed = 10;',
+    'const name = "Alex";',
+    'let isReady = true;',
+    'score = score + 1;',
+    'lives = lives - 1;',
+    'console.log("hello");',
+    'const coins = 100;',
+    'let level = 1;',
+    'const age = 12;',
+    'let timer = 30;',
+    'const color = "red";',
+    'let isWin = false;',
+    'console.log(score);'
+  ],
+
+  medium: [
+    'const user = { name: "Alex", level: 7 };',
+    'const keys = ["a", "s", "d", "f"];',
+    'if (score > 100) { level++; }',
+    'if (isReady) { start(); } else { wait(); }',
+    'for (let i = 0; i < 5; i++) { coins += i; }',
+    'const result = speed >= 30 ? "fast" : "slow";',
+    'array.map(item => item.name);',
+    'button.addEventListener("click", startGame);',
+    'while (timer > 0) { timer--; }',
+    'game.score += combo * 2;',
+    'const player = { hp: 100, mana: 50 };',
+    'const numbers = [1, 2, 3, 4, 5];',
+    'if (lives === 0) { gameOver(); }',
+    'const total = price * count;',
+    'items.filter(item => item.active);'
+  ],
+
+  hard: [
+    'export default function App() { return <main>Hello</main>; }',
+    'function add(a, b) { return a + b; }',
+    'try { saveResult(); } catch (error) { console.log(error); }',
+    '<div className="card">Hello</div>',
+    '<button onClick={startGame}>Start</button>',
+    'document.querySelector(".btn").classList.add("active");',
+    'const handleClick = () => { setScore(score + 1); };',
+    'useEffect(() => { resetTest(); }, [mode]);',
+    'const newItems = items.map(item => ({ ...item, active: true }));',
+    'async function loadData() { const data = await fetch(url); }',
+    'return users.filter(user => user.level > 5).map(user => user.name);',
+    'const App = () => <div className="app">Typing</div>;',
+    'localStorage.setItem("userData", JSON.stringify(userData));',
+    'const updatedUser = { ...user, coins: user.coins + 10 };',
+    'window.addEventListener("keydown", handleKeyDown);'
+  ]
+};
+
 export const punctuationMarks = ['!', ',', '.', '?', '(', ')', '"', '-', ';', ':'];
 
 export const quotes = [
