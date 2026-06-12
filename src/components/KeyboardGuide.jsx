@@ -6,12 +6,12 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
   const [isShiftPressed, setIsShiftPressed] = useState(false);
 
   const [isLaptopLayout, setIsLaptopLayout] = useState(
-    typeof window !== 'undefined' ? window.innerWidth <= 1400 : false
+    typeof window !== 'undefined' ? window.innerWidth <= 760 : false
   );
 
   useEffect(() => {
     const handleResize = () => {
-      setIsLaptopLayout(window.innerWidth <= 1400);
+      setIsLaptopLayout(window.innerWidth <= 760);
     };
 
     handleResize();
@@ -20,14 +20,15 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Значения по умолчанию (если тема не передана)
-  const theme = keyboardTheme || {
-    keyBg: '#2d2d3a',
-    keyBorder: '#4a4a5a',
-    keyText: '#e0e0e0',
-    highlightBg: '#ffd700',
-    highlightText: '#1e1e2f'
+  const referenceTheme = {
+    keyBg: 'transparent',
+    keyBorder: '#cbd0df',
+    keyText: '#cbd0df',
+    highlightBg: '#cbd0df',
+    highlightText: '#22272e'
   };
+  const isDefaultTheme = !keyboardTheme || keyboardTheme.highlightText === '#22272e';
+  const theme = isDefaultTheme ? referenceTheme : keyboardTheme;
 
   const russianKeyboardRows = [
     [
@@ -291,10 +292,10 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
 
   const styles = {
     container: {
-      background: '#2a2a3b',
-      padding: '10px',
-      borderRadius: '20px',
-      marginTop: '20px',
+      background: 'transparent',
+      padding: 0,
+      borderRadius: 0,
+      marginTop: '48px',
       overflowX: 'auto'
     },
     title: {
@@ -302,7 +303,7 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
       marginBottom: '15px',
       fontSize: '14px',
       opacity: 0.9,
-      color: '#ffd700'
+      color: '#4895ef'
     },
     nextCharHint: {
       textAlign: 'center',
@@ -316,37 +317,36 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
     keyboard: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '6px',
-      minWidth: '950px',
-      transform: isLaptopLayout ? 'scale(0.82)' : 'scale(1)',
+      gap: '5px',
+      minWidth: '720px',
+      transform: isLaptopLayout ? 'scale(0.76)' : 'scale(1)',
       transformOrigin: 'top center',
     },
     row: {
       display: 'flex',
       justifyContent: 'center',
-      gap: '6px',
-      marginBottom: '4px'
+      gap: '5px',
+      marginBottom: '0'
     },
     key: {
-      minWidth: '55px',
-      height: '50px',
+      minWidth: '42px',
+      height: '42px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       border: '1px solid',
-      borderRadius: '10px',
-      fontSize: '14px',
-      fontWeight: 'bold',
+      borderRadius: '7px',
+      fontSize: '12px',
+      fontWeight: 400,
       transition: 'all 0.1s',
       position: 'relative',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-      // тема задаётся динамически ниже
+      boxShadow: 'none'
     },
     keyWide: {
-      minWidth: '85px'
+      minWidth: '68px'
     },
     keySpace: {
-      minWidth: '380px'
+      minWidth: '296px'
     },
     legend: {
       display: 'flex',
@@ -367,7 +367,7 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
       display: 'flex',
       alignItems: 'flex-start',
       justifyContent: 'center',
-      gap: isLaptopLayout ? '10px' : '0',
+      gap: 0,
       width: '100%',
     },
     keyboardColumn: {
@@ -377,7 +377,7 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
       flexShrink: 0,
     },
     keyboardViewport: {
-      width: isLaptopLayout ? '780px' : '950px',
+      width: isLaptopLayout ? '560px' : '760px',
       display: 'flex',
       justifyContent: 'center',
       overflow: 'visible',
@@ -391,26 +391,20 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
       flexShrink: 0,
       transform: 'scale(0.72)',
       transformOrigin: 'top center',
+      opacity: 0.56,
+      filter: 'grayscale(1)',
     },
     bottomHands: {
       width: '100%',
+      marginTop: '-118px',
+      opacity: 0.56,
+      filter: 'grayscale(1)',
+      pointerEvents: 'none'
     },
   };
 
   return (
     <div style={styles.container}>
-      <div style={styles.title}>
-        ⌨️ Клавиатурный тренажер | Золотая клавиша = следующая
-      </div>
-      
-      {nextChar && (
-        <div style={styles.nextCharHint}>
-          ⭐ Следующая клавиша: <strong style={{ fontSize: '24px', color: '#ffd700' }}>
-            {nextChar === ' ' ? 'ПРОБЕЛ' : `"${nextChar}"`}
-          </strong>
-        </div>
-      )}
-      
       <div style={styles.trainingArea}>
         {isLaptopLayout && (
           <div style={styles.sideHand}>
@@ -445,10 +439,10 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
 
                     if (isNext) {
                       keyStyle.backgroundColor = theme.highlightBg;
-                      keyStyle.borderColor = '#fff';
+                      keyStyle.borderColor = theme.highlightBg;
                       keyStyle.color = theme.highlightText;
-                      keyStyle.transform = 'scale(1.02)';
-                      keyStyle.boxShadow = `0 0 20px ${theme.highlightBg}`;
+                      keyStyle.transform = 'none';
+                      keyStyle.boxShadow = 'none';
                     }
 
                     return (
@@ -486,17 +480,6 @@ const KeyboardGuide = ({ nextChar, keyboardTheme, language = 'russian' }) => {
             />
           </div>
         )}
-      </div>
-      
-      <div style={styles.legend}>
-        <div style={styles.legendItem}>
-          <div style={{width: '20px', height: '20px', backgroundColor: theme.highlightBg, borderRadius: '4px'}}></div>
-          <span>Следующая клавиша</span>
-        </div>
-        <div style={styles.legendItem}>
-          <div style={{width: '20px', height: '20px', backgroundColor: theme.keyBg, border: `1px solid ${theme.keyBorder}`, borderRadius: '4px'}}></div>
-          <span>Обычная клавиша</span>
-        </div>
       </div>
     </div>
   );

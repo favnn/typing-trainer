@@ -120,11 +120,11 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       {
         label: 'WPM (слов в минуту)',
         data: wpmData,
-        borderColor: '#4caf50',
-        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+        borderColor: '#4895ef',
+        backgroundColor: 'rgba(72, 149, 239, 0.1)',
         borderWidth: 2.5,
         pointRadius: 3,
-        pointBackgroundColor: '#4caf50',
+        pointBackgroundColor: '#4895ef',
         tension: 0.3,
         fill: false,
         hidden: !visibleLines.wpm
@@ -132,11 +132,11 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       {
         label: 'RAW (сырая скорость)',
         data: rawData,
-        borderColor: '#2196f3',
-        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+        borderColor: '#cbd0df',
+        backgroundColor: 'rgba(203, 208, 223, 0.1)',
         borderWidth: 2.5,
         pointRadius: 3,
-        pointBackgroundColor: '#2196f3',
+        pointBackgroundColor: '#cbd0df',
         tension: 0.3,
         fill: false,
         hidden: !visibleLines.raw
@@ -144,23 +144,23 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       {
         label: 'BURST (макс. рывок)',
         data: burstData,
-        borderColor: '#ff9800',
-        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+        borderColor: '#8a94a5',
+        backgroundColor: 'rgba(138, 148, 165, 0.1)',
         borderWidth: 2,
         pointRadius: 3,
-        pointBackgroundColor: '#ff9800',
+        pointBackgroundColor: '#8a94a5',
         tension: 0.3,
         fill: false,
         hidden: !visibleLines.burst
       },
       {
-        label: '⚠️ Ошибки',
+        label: 'Ошибки',
         data: errorsData,
-        borderColor: '#f44336',
-        backgroundColor: '#f44336',
+        borderColor: '#ff6b81',
+        backgroundColor: '#ff6b81',
         pointRadius: 8,
-        pointBackgroundColor: '#f44336',
-        pointBorderColor: '#fff',
+        pointBackgroundColor: '#ff6b81',
+        pointBorderColor: '#22272e',
         pointBorderWidth: 2,
         showLine: false,
         tension: 0,
@@ -177,9 +177,9 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       tooltip: {
         mode: 'index',
         intersect: false,
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        titleColor: '#ffd700',
-        bodyColor: '#e0e0e0'
+        backgroundColor: '#272e35',
+        titleColor: '#cbd0df',
+        bodyColor: '#cbd0df'
       }
     },
     scales: {
@@ -189,37 +189,37 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
         title: {
           display: true,
           text: 'скорость (символов/мин)',
-          color: '#aaa'
+          color: '#6d7887'
         },
-        grid: { color: 'rgba(255,255,255,0.1)' }
+        grid: { color: 'rgba(203,208,223,0.08)' }
       },
       x: {
         beginAtZero: true,
         title: {
           display: true,
           text: 'время (секунды)',
-          color: '#aaa'
+          color: '#6d7887'
         },
         ticks: {
           autoSkip: false,
           maxRotation: 0,
-          color: '#aaa'
+          color: '#6d7887'
         },
-        grid: { color: 'rgba(255,255,255,0.1)' }
+        grid: { color: 'rgba(203,208,223,0.08)' }
       }
     }
   };
 
   const styles = {
     container: {
-      background: 'rgba(0, 0, 0, 0.5)',
-      borderRadius: '20px',
+      background: '#272e35',
+      borderRadius: '8px',
       padding: '1.5rem',
-      margin: '1rem 0',
-      backdropFilter: 'blur(10px)'
+      margin: '1.5rem 0 0',
+      border: '1px solid rgba(203, 208, 223, 0.08)'
     },
     title: {
-      color: '#ffd700',
+      color: '#6d7887',
       marginBottom: '1rem',
       fontSize: '1.2rem'
     },
@@ -229,10 +229,10 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       gap: '1.5rem',
       marginBottom: '1.5rem',
       paddingBottom: '1.5rem',
-      borderBottom: '1px solid rgba(255,255,255,0.1)'
+      borderBottom: '1px solid rgba(203,208,223,0.08)'
     },
     mainStatCard: { textAlign: 'center' },
-    mainStatValue: { fontSize: '3rem', fontWeight: 'bold', color: '#ffd700', lineHeight: 1.2 },
+    mainStatValue: { fontSize: '3rem', fontWeight: 'bold', color: '#cbd0df', lineHeight: 1.2 },
     mainStatLabel: { fontSize: '0.8rem', opacity: 0.7, textTransform: 'uppercase' },
     statsGrid: {
       display: 'grid',
@@ -241,14 +241,14 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       marginBottom: '1.5rem'
     },
     statCard: {
-      background: 'rgba(0, 0, 0, 0.3)',
-      borderRadius: '12px',
+      background: '#22272e',
+      borderRadius: '8px',
       padding: '0.8rem',
       textAlign: 'center'
     },
-    statValue: { fontSize: '1.5rem', fontWeight: 'bold', color: '#e0e0e0' },
+    statValue: { fontSize: '1.5rem', fontWeight: 'bold', color: '#cbd0df' },
     statLabel: { fontSize: '0.7rem', opacity: 0.6, textTransform: 'uppercase' },
-    statSub: { fontSize: '0.7rem', color: '#aaa' },
+    statSub: { fontSize: '0.7rem', color: '#6d7887' },
     bottomStats: {
       display: 'flex',
       justifyContent: 'space-between',
@@ -256,11 +256,11 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       flexWrap: 'wrap',
       gap: '1rem',
       paddingTop: '1rem',
-      borderTop: '1px solid rgba(255,255,255,0.1)'
+      borderTop: '1px solid rgba(203,208,223,0.08)'
     },
     bottomStat: { display: 'flex', alignItems: 'baseline', gap: '0.5rem' },
     bottomStatLabel: { fontSize: '0.8rem', opacity: 0.6 },
-    bottomStatValue: { fontSize: '1.2rem', fontWeight: 'bold', color: '#ffd700' },
+    bottomStatValue: { fontSize: '1.2rem', fontWeight: 'bold', color: '#cbd0df' },
     legend: {
       display: 'flex',
       flexWrap: 'wrap',
@@ -268,31 +268,31 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       marginBottom: '1rem',
       justifyContent: 'center',
       padding: '0.5rem',
-      background: 'rgba(0,0,0,0.3)',
-      borderRadius: '12px'
+      background: '#22272e',
+      borderRadius: '8px'
     },
     legendBtn: {
       display: 'flex',
       alignItems: 'center',
       gap: '0.5rem',
       padding: '0.3rem 0.8rem',
-      borderRadius: '20px',
+      borderRadius: '8px',
       border: 'none',
       cursor: 'pointer',
       fontSize: '0.8rem',
       transition: 'all 0.2s',
-      background: 'rgba(255,255,255,0.1)',
-      color: '#e0e0e0'
+      background: 'transparent',
+      color: '#6d7887'
     },
-    legendBtnActive: { background: 'rgba(76, 175, 80, 0.3)', border: '1px solid #4caf50' },
+    legendBtnActive: { background: 'rgba(72, 149, 239, 0.1)', border: '1px solid rgba(72, 149, 239, 0.4)', color: '#4895ef' },
     legendColor: { width: '16px', height: '16px', borderRadius: '4px' },
     problemKeys: {
       marginTop: '1rem',
       padding: '0.8rem',
-      background: 'rgba(244, 67, 54, 0.15)',
-      borderRadius: '12px',
+      background: 'rgba(255, 107, 129, 0.14)',
+      borderRadius: '8px',
       fontSize: '0.8rem',
-      border: '1px solid rgba(244, 67, 54, 0.3)'
+      border: '1px solid rgba(255, 107, 129, 0.35)'
     },
     chartContainer: { margin: '1rem 0', overflowX: 'auto', paddingBottom: '0.4rem', scrollBehavior: 'smooth' }
   };
@@ -302,11 +302,11 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
     : 0;
 
   const Glossary = () => (
-    <div style={{ marginTop: '1rem', fontSize: '0.7rem', opacity: 0.6, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.8rem' }}>
-      <div><strong style={{ color: '#4caf50' }}>WPM</strong> — Words Per Minute (слов в минуту) — основная скорость печати</div>
-      <div><strong style={{ color: '#2196f3' }}>RAW</strong> — сырая скорость печати без учёта ошибок</div>
-      <div><strong style={{ color: '#ff9800' }}>BURST</strong> — максимальная скорость рывками (пиковые значения)</div>
-      <div><strong style={{ color: '#f44336' }}>⚠️ Ошибки</strong> — красные точки показывают моменты, когда были допущены ошибки</div>
+    <div style={{ marginTop: '1rem', fontSize: '0.7rem', opacity: 0.6, borderTop: '1px solid rgba(203,208,223,0.08)', paddingTop: '0.8rem' }}>
+      <div><strong style={{ color: '#4895ef' }}>WPM</strong> — Words Per Minute (слов в минуту) — основная скорость печати</div>
+      <div><strong style={{ color: '#cbd0df' }}>RAW</strong> — сырая скорость печати без учёта ошибок</div>
+      <div><strong style={{ color: '#8a94a5' }}>BURST</strong> — максимальная скорость рывками (пиковые значения)</div>
+      <div><strong style={{ color: '#ff6b81' }}>Ошибки</strong> — красные точки показывают моменты, когда были допущены ошибки</div>
     </div>
   );
 
@@ -336,25 +336,25 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
           style={{...styles.legendBtn, ...(visibleLines.wpm ? styles.legendBtnActive : {})}}
           onClick={() => toggleLine('wpm')}
         >
-          <div style={{...styles.legendColor, background: '#4caf50'}}></div>WPM
+          <div style={{...styles.legendColor, background: '#4895ef'}}></div>WPM
         </button>
         <button 
           style={{...styles.legendBtn, ...(visibleLines.raw ? styles.legendBtnActive : {})}}
           onClick={() => toggleLine('raw')}
         >
-          <div style={{...styles.legendColor, background: '#2196f3'}}></div>RAW
+          <div style={{...styles.legendColor, background: '#cbd0df'}}></div>RAW
         </button>
         <button 
           style={{...styles.legendBtn, ...(visibleLines.burst ? styles.legendBtnActive : {})}}
           onClick={() => toggleLine('burst')}
         >
-          <div style={{...styles.legendColor, background: '#ff9800'}}></div>BURST
+          <div style={{...styles.legendColor, background: '#8a94a5'}}></div>BURST
         </button>
         <button 
           style={{...styles.legendBtn, ...(visibleLines.errors ? styles.legendBtnActive : {})}}
           onClick={() => toggleLine('errors')}
         >
-          <div style={{...styles.legendColor, background: '#f44336'}}></div>⚠️ Ошибки
+          <div style={{...styles.legendColor, background: '#ff6b81'}}></div>Ошибки
         </button>
       </div>
       
@@ -410,7 +410,7 @@ const StatsDashboard = ({ stats, title, typingHistory = [] }) => {
       
       {stats.problemKeys && stats.problemKeys.length > 0 && (
         <div style={styles.problemKeys}>
-          <strong>🔴 Проблемные клавиши:</strong> {stats.problemKeys.join(', ')}
+          <strong>Проблемные клавиши:</strong> {stats.problemKeys.join(', ')}
         </div>
       )}
     </div>

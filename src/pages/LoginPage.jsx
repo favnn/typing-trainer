@@ -14,22 +14,23 @@ const LoginPage = ({ onLogin }) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      minHeight: 'calc(100vh - 80px)',
+      minHeight: '100vh',
       padding: '2rem'
     },
     formContainer: {
-      background: 'rgba(255, 255, 255, 0.05)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '20px',
+      background: '#272e35',
+      border: '1px solid rgba(203, 208, 223, 0.08)',
+      borderRadius: '8px',
       padding: '2rem',
       width: '100%',
       maxWidth: '400px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+      boxShadow: 'none'
     },
     title: {
       textAlign: 'center',
       marginBottom: '2rem',
-      color: '#ffd700'
+      color: '#6d7887',
+      fontSize: '18px'
     },
     inputGroup: {
       marginBottom: '1rem'
@@ -37,25 +38,26 @@ const LoginPage = ({ onLogin }) => {
     label: {
       display: 'block',
       marginBottom: '0.5rem',
-      color: '#e0e0e0'
+      color: '#6d7887',
+      fontSize: '13px'
     },
     input: {
       width: '100%',
       padding: '12px',
-      background: '#1e1e2f',
-      border: '1px solid #4a4a5a',
+      background: '#22272e',
+      border: '1px solid #cbd0df',
       borderRadius: '8px',
-      color: 'white',
+      color: '#cbd0df',
       fontSize: '1rem',
       outline: 'none'
     },
     button: {
       width: '100%',
       padding: '12px',
-      background: '#4caf50',
+      background: '#4895ef',
       border: 'none',
       borderRadius: '8px',
-      color: 'white',
+      color: '#22272e',
       fontSize: '1rem',
       fontWeight: 'bold',
       cursor: 'pointer',
@@ -65,20 +67,20 @@ const LoginPage = ({ onLogin }) => {
       width: '100%',
       padding: '12px',
       background: 'transparent',
-      border: '1px solid #4a4a5a',
+      border: '1px solid rgba(203, 208, 223, 0.16)',
       borderRadius: '8px',
-      color: '#e0e0e0',
+      color: '#6d7887',
       fontSize: '1rem',
       cursor: 'pointer',
       marginTop: '1rem'
     },
     error: {
-      background: 'rgba(244, 67, 54, 0.2)',
-      border: '1px solid #f44336',
+      background: 'rgba(255, 107, 129, 0.14)',
+      border: '1px solid #ff6b81',
       borderRadius: '8px',
       padding: '10px',
       marginBottom: '1rem',
-      color: '#f44336',
+      color: '#ff6b81',
       textAlign: 'center'
     },
     buttonDisabled: {
@@ -136,13 +138,13 @@ const LoginPage = ({ onLogin }) => {
   return (
     <div style={styles.container}>
       <div style={styles.formContainer}>
-        <h2 style={styles.title}>{isLogin ? '🔐 Вход' : '📝 Регистрация'}</h2>
+        <h2 style={styles.title}>{isLogin ? 'Вход' : 'Регистрация'}</h2>
         
         {error && <div style={styles.error}>{error}</div>}
         
         <form onSubmit={handleSubmit}>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>👤 Имя пользователя</label>
+            <label style={styles.label}>Имя пользователя</label>
             <input
               type="text"
               style={styles.input}
@@ -154,7 +156,7 @@ const LoginPage = ({ onLogin }) => {
           </div>
           
           <div style={styles.inputGroup}>
-            <label style={styles.label}>🔒 Пароль</label>
+            <label style={styles.label}>Пароль</label>
             <input
               type="password"
               style={styles.input}
@@ -166,7 +168,7 @@ const LoginPage = ({ onLogin }) => {
           
           {!isLogin && (
             <div style={styles.inputGroup}>
-              <label style={styles.label}>🔒 Подтверждение пароля</label>
+              <label style={styles.label}>Подтверждение пароля</label>
               <input
                 type="password"
                 style={styles.input}

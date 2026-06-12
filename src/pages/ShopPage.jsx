@@ -84,22 +84,74 @@ const ShopPage = ({ userData, updateUserData }) => {
   const isPurchased = (item) => item.default || item.price === 0 || purchasedItems.includes(item.id);
 
   const styles = {
-    container: { padding: '2rem', maxWidth: '1200px', margin: '0 auto' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap' },
-    filterButtons: { display: 'flex', gap: '10px', marginBottom: '1rem', justifyContent: 'center', flexWrap: 'wrap' },
-    filterBtn: { padding: '8px 16px', background: '#3a3a4a', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' },
-    filterBtnActive: { background: '#4caf50' },
-    shopGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' },
-    itemCard: { background: '#2a2a3b', borderRadius: '16px', padding: '1.5rem', textAlign: 'center', cursor: 'pointer', border: '2px solid transparent', transition: 'transform 0.2s' },
-    itemCardActive: { border: '2px solid #ffd700', boxShadow: '0 0 15px rgba(255,215,0,0.3)' },
-    itemPreview: { width: '100%', height: '220px', borderRadius: '12px', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'},
+    container: {
+      minHeight: '100vh',
+      maxWidth: '1040px',
+      margin: '0 auto',
+      padding: '36px clamp(20px, 6vw, 86px) 42px'
+    },
+    header: {
+      height: '44px',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: '16px',
+      marginBottom: '42px',
+      flexWrap: 'wrap'
+    },
+    title: {
+      color: '#6d7887',
+      fontSize: '18px',
+      lineHeight: 1.2,
+      fontWeight: 600
+    },
+    coinPill: {
+      minHeight: '35px',
+      padding: '0 12px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      borderRadius: '8px',
+      background: '#272e35',
+      color: '#6d7887',
+      fontSize: '13px',
+      fontWeight: 600
+    },
+    filterButtons: {
+      display: 'flex',
+      gap: '10px',
+      marginBottom: '24px',
+      flexWrap: 'wrap'
+    },
+    filterBtn: {
+      minHeight: '32px',
+      padding: '0 14px',
+      background: '#272e35',
+      border: 'none',
+      color: '#6d7887',
+      borderRadius: '8px',
+      fontFamily: 'inherit',
+      fontWeight: 500
+    },
+    filterBtnActive: { color: '#4895ef', background: 'rgba(72, 149, 239, 0.1)' },
+    shopGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '16px' },
+    itemCard: {
+      background: '#272e35',
+      borderRadius: '8px',
+      padding: '1rem',
+      textAlign: 'center',
+      cursor: 'pointer',
+      border: '1px solid rgba(203, 208, 223, 0.08)',
+      transition: 'border-color 0.16s ease'
+    },
+    itemCardActive: { border: '1px solid rgba(72, 149, 239, 0.55)' },
+    itemPreview: { width: '100%', height: '200px', borderRadius: '8px', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'},
     characterPreviewWrapper: { height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '70px', boxSizing: 'border-box', transform: 'scale(0.9)', transformOrigin: 'center'},
-    itemName: { fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem', color: '#ffd700' },
-    itemPrice: { fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' },
-    btn: { padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', width: '100%' },
-    buyBtn: { background: '#4caf50', color: 'white' },
-    activateBtn: { background: '#2196f3', color: 'white' },
-    activeBtn: { background: '#ffd700', color: '#1e1e2f' },
+    itemName: { fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem', color: '#cbd0df' },
+    itemPrice: { fontSize: '0.9rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', color: '#6d7887' },
+    btn: { minHeight: '35px', padding: '0 14px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', width: '100%', fontFamily: 'inherit' },
+    buyBtn: { background: '#4895ef', color: '#22272e' },
+    activateBtn: { background: '#22272e', color: '#cbd0df' },
+    activeBtn: { background: 'rgba(72, 149, 239, 0.1)', color: '#4895ef' },
     disabledBtn: { opacity: 0.5, cursor: 'not-allowed' }
   };
 
@@ -108,13 +160,13 @@ const ShopPage = ({ userData, updateUserData }) => {
       return <div style={{ ...styles.itemPreview, ...item.style }} />;
     } else if (item.category === 'keyboard') {
       return (
-        <div style={{ ...styles.itemPreview, background: '#1e1e2f', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ ...styles.itemPreview, background: '#22272e', flexDirection: 'column', gap: '10px' }}>
           <div style={{ display: 'flex', gap: '4px' }}>
             {[1,2,3].map(i => (
-              <div key={i} style={{ width: '30px', height: '30px', backgroundColor: item.style.keyBg, border: `2px solid ${item.style.keyBorder}`, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.style.keyText, fontSize: '14px' }}>A</div>
+              <div key={i} style={{ width: '30px', height: '30px', backgroundColor: item.style.keyBg, border: `1px solid ${item.style.keyBorder}`, borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.style.keyText, fontSize: '14px' }}>A</div>
             ))}
           </div>
-          <div style={{ fontSize: '12px', color: '#aaa' }}>Предпросмотр клавиш</div>
+          <div style={{ fontSize: '12px', color: '#6d7887' }}>Предпросмотр клавиш</div>
         </div>
       );
     } else if (['head', 'body', 'arms', 'legs', 'shoes', 'hat'].includes(item.category)) {
@@ -133,7 +185,7 @@ const ShopPage = ({ userData, updateUserData }) => {
       };
 
       return (
-        <div style={{ ...styles.itemPreview, background: 'rgba(0,0,0,0.2)' }}>
+        <div style={{ ...styles.itemPreview, background: '#22272e' }}>
           <div style={styles.characterPreviewWrapper}>
               <Character
               activeWardrobe={previewWardrobe}
@@ -161,9 +213,9 @@ const ShopPage = ({ userData, updateUserData }) => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h2>🛒 Магазин</h2>
+        <h1 style={styles.title}>Магазин</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ color: '#ffd700', fontWeight: 'bold' }}>🪙 {userData.coins} монет</span>
+          <span style={styles.coinPill}>{userData.coins} coins</span>
         </div>
       </div>
 
@@ -193,7 +245,7 @@ const ShopPage = ({ userData, updateUserData }) => {
             btnText = 'Использовать';
           } else {
             btnStyle = styles.buyBtn;
-            btnText = `Купить за ${item.price} 🪙`;
+            btnText = `Купить за ${item.price}`;
             btnDisabled = userData.coins < item.price;
           }
 
@@ -206,8 +258,8 @@ const ShopPage = ({ userData, updateUserData }) => {
               {renderPreview(item)}
               <div style={styles.itemName}>{item.name}</div>
               <div style={styles.itemPrice}>
-                {!purchased && <span>💰 {item.price} 🪙</span>}
-                {purchased && <span>✅ Куплено</span>}
+                {!purchased && <span>{item.price} coins</span>}
+                {purchased && <span>Куплено</span>}
               </div>
               <button
                 style={{ ...styles.btn, ...btnStyle, ...(btnDisabled ? styles.disabledBtn : {}) }}

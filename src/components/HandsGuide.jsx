@@ -71,7 +71,7 @@
     const HandsGuide = ({
     nextChar,
     language = 'russian',
-    highlightColor = '#ffd700',
+    highlightColor = '#cbd0df',
     shiftKeyId = null,
     side = 'both',
     showHint = true
@@ -96,7 +96,7 @@
     container: {
         marginTop: isSideMode ? '0' : '24px',
         paddingTop: isSideMode ? '0' : '22px',
-        borderTop: isSideMode ? 'none' : '1px solid rgba(255,255,255,0.1)',
+        borderTop: isSideMode ? 'none' : '1px solid rgba(203,208,223,0.08)',
         width: isSideMode ? '165px' : '100%',
         overflow: 'visible'
     },
@@ -104,7 +104,7 @@
         textAlign: 'center',
         marginBottom: '16px',
         fontSize: '14px',
-        color: hasActiveFinger ? highlightColor : '#aaa',
+        color: hasActiveFinger ? '#4895ef' : '#6d7887',
         fontWeight: hasActiveFinger ? 'bold' : 'normal'
     },
     handsWrapper: {
@@ -139,9 +139,9 @@
     finger: {
         width: '42px',
         borderRadius: '24px 24px 18px 18px',
-        background: 'linear-gradient(180deg, #f0b58f 0%, #c97956 100%)',
-        border: '2px solid rgba(255,255,255,0.18)',
-        boxShadow: 'inset 0 8px 14px rgba(255,255,255,0.22), 0 8px 16px rgba(0,0,0,0.28)',
+        background: '#6d7887',
+        border: '2px solid rgba(203,208,223,0.12)',
+        boxShadow: 'none',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -149,7 +149,7 @@
         textAlign: 'center',
         fontSize: '10px',
         lineHeight: '1.15',
-        color: 'rgba(255,255,255,0.72)',
+        color: '#22272e',
         fontWeight: 'bold',
         transition: 'all 0.18s ease'
     },
@@ -158,13 +158,13 @@
         height: '92px',
         marginTop: '-8px',
         borderRadius: '38px 38px 48px 48px',
-        background: 'linear-gradient(180deg, #e6a77f 0%, #b96748 100%)',
-        border: '2px solid rgba(255,255,255,0.16)',
-        boxShadow: 'inset 0 8px 20px rgba(255,255,255,0.16), 0 10px 18px rgba(0,0,0,0.3)',
+        background: '#6d7887',
+        border: '2px solid rgba(203,208,223,0.12)',
+        boxShadow: 'none',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        color: 'rgba(255,255,255,0.7)',
+        color: '#22272e',
         fontSize: '12px',
         fontWeight: 'bold',
         zIndex: 1
@@ -175,17 +175,17 @@
         width: '78px',
         height: '36px',
         borderRadius: '24px',
-        background: 'linear-gradient(180deg, #e9aa83 0%, #b96748 100%)',
-        border: '2px solid rgba(255,255,255,0.16)',
-        boxShadow: '0 8px 16px rgba(0,0,0,0.26)',
+        background: '#6d7887',
+        border: '2px solid rgba(203,208,223,0.12)',
+        boxShadow: 'none',
         transition: 'all 0.18s ease',
         zIndex: 3
     },
     active: {
-        background: `linear-gradient(180deg, ${highlightColor} 0%, #ffb300 100%)`,
-        color: '#1e1e2f',
-        borderColor: '#fff',
-        boxShadow: `0 0 22px ${highlightColor}, inset 0 6px 12px rgba(255,255,255,0.45)`,
+        background: highlightColor,
+        color: '#22272e',
+        borderColor: highlightColor,
+        boxShadow: 'none',
         animation: 'fingerGlow 0.9s ease-in-out infinite'
     }
     };
@@ -223,14 +223,6 @@
         `}
         </style>
 
-        {showHint && (
-        <div style={styles.hint}>
-            {uniqueActiveFingers.length > 0
-            ? ` ${uniqueActiveFingers.map(finger => FINGER_LABELS[finger]).join(' + ')}`
-            : 'Для следующей клавиши палец не определён'}
-        </div>
-        )}
-
         <div style={styles.handsWrapper}>
         {showLeftHand && (
         <div style={styles.hand}>
@@ -247,7 +239,7 @@
             }}
             />
 
-            <div style={styles.palm}>Левая рука</div>
+            <div style={styles.palm}></div>
         </div>
         )}
 
@@ -266,7 +258,7 @@
             }}
             />
 
-            <div style={styles.palm}>Правая рука</div>
+            <div style={styles.palm}></div>
         </div>
         )}
         </div>

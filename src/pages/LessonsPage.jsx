@@ -14,21 +14,96 @@ const LessonsPage = ({ userData, updateUserData, keyboardTheme }) => {
   const currentThemes = selectedLang === 'russian' ? russianLessonsByTheme : englishLessonsByTheme;
 
   const styles = {
-    container: { padding: '2rem', maxWidth: '1200px', margin: '0 auto' },
-    header: { marginBottom: '2rem' },
-    langSwitch: { display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' },
-    langBtn: { background: '#3a3a4a', border: 'none', color: 'white', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontSize: '1rem' },
-    langBtnActive: { background: '#4caf50' },
-    progressBarContainer: { background: '#2d2d3a', borderRadius: '20px', padding: '0.5rem', marginBottom: '1rem', position: 'relative' },
-    progressBar: { background: '#4caf50', height: '30px', borderRadius: '15px', transition: 'width 0.3s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' },
-    themesList: { display: 'flex', flexDirection: 'column', gap: '1.5rem' },
-    themeCard: { background: '#2a2a3b', borderRadius: '16px', padding: '1rem' },
-    themeTitle: { marginBottom: '1rem', color: '#ffd700' },
+    container: {
+      minHeight: '100vh',
+      maxWidth: '1040px',
+      margin: '0 auto',
+      padding: '36px clamp(20px, 6vw, 86px) 42px'
+    },
+    topbar: {
+      height: '44px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '16px',
+      marginBottom: '42px'
+    },
+    title: {
+      color: '#6d7887',
+      fontSize: '18px',
+      lineHeight: 1.2,
+      fontWeight: 600
+    },
+    langSwitch: {
+      display: 'inline-flex',
+      overflow: 'hidden',
+      borderRadius: '8px',
+      background: '#272e35'
+    },
+    langBtn: {
+      minHeight: '32px',
+      padding: '0 14px',
+      background: 'transparent',
+      border: 'none',
+      color: '#6d7887',
+      fontFamily: 'inherit',
+      fontSize: '14px',
+      fontWeight: 500
+    },
+    langBtnActive: { color: '#4895ef' },
+    header: {
+      marginBottom: '28px',
+      padding: '1.5rem',
+      borderRadius: '8px',
+      background: '#272e35',
+      border: '1px solid rgba(203, 208, 223, 0.08)'
+    },
+    progressBarContainer: {
+      background: '#22272e',
+      borderRadius: '8px',
+      height: '32px',
+      overflow: 'hidden',
+      marginBottom: '1rem'
+    },
+    progressBar: {
+      background: '#4895ef',
+      height: '100%',
+      minWidth: '36px',
+      transition: 'width 0.3s ease',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#22272e',
+      fontWeight: 700,
+      fontSize: '13px'
+    },
+    progressText: {
+      color: '#6d7887',
+      textAlign: 'center',
+      fontSize: '13px'
+    },
+    themesList: { display: 'flex', flexDirection: 'column', gap: '16px' },
+    themeCard: {
+      background: '#272e35',
+      borderRadius: '8px',
+      padding: '1rem',
+      border: '1px solid rgba(203, 208, 223, 0.08)'
+    },
+    themeTitle: { marginBottom: '1rem', color: '#cbd0df', fontSize: '16px' },
+    themeMeta: { color: '#6d7887', fontSize: '12px', marginLeft: '10px' },
     lessonsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '10px' },
-    lessonBtn: { background: '#3a3a4a', border: 'none', color: 'white', padding: '10px', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' },
-    lessonCompleted: { background: '#4caf50', color: 'white' },
-    lessonLocked: { background: '#2a2a3a', opacity: 0.5, cursor: 'not-allowed' },
-    stats: { fontSize: '0.7rem', marginTop: '5px', color: '#aaa' }
+    lessonBtn: {
+      minHeight: '44px',
+      background: '#22272e',
+      border: '1px solid rgba(203, 208, 223, 0.08)',
+      color: '#6d7887',
+      padding: '10px',
+      borderRadius: '8px',
+      fontFamily: 'inherit'
+    },
+    lessonCompleted: { color: '#4895ef', borderColor: 'rgba(72, 149, 239, 0.45)' },
+    lessonLocked: { opacity: 0.4, cursor: 'not-allowed' },
+    stats: { fontSize: '0.7rem', marginTop: '5px', color: '#6d7887' }
   };
 
   useEffect(() => {
@@ -109,22 +184,30 @@ const LessonsPage = ({ userData, updateUserData, keyboardTheme }) => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
+      <div style={styles.topbar}>
+        <h1 style={styles.title}>Уроки</h1>
         <div style={styles.langSwitch}>
-          <button style={{ ...styles.langBtn, ...(selectedLang === 'russian' ? styles.langBtnActive : {}) }} onClick={() => setSelectedLang('russian')}>🇷🇺 Русский</button>
-          <button style={{ ...styles.langBtn, ...(selectedLang === 'english' ? styles.langBtnActive : {}) }} onClick={() => setSelectedLang('english')}>🇬🇧 English</button>
+          <button style={{ ...styles.langBtn, ...(selectedLang === 'russian' ? styles.langBtnActive : {}) }} onClick={() => setSelectedLang('russian')}>russian</button>
+          <button style={{ ...styles.langBtn, ...(selectedLang === 'english' ? styles.langBtnActive : {}) }} onClick={() => setSelectedLang('english')}>english</button>
         </div>
+      </div>
+
+      <div style={styles.header}>
         <div style={styles.progressBarContainer}>
           <div style={{ ...styles.progressBar, width: `${percentComplete}%` }}>{percentComplete}%</div>
         </div>
-        <p style={{ textAlign: 'center' }}>Пройдено уроков: {completedLessons} из {totalLessons}</p>
+        <p style={styles.progressText}>Пройдено уроков: {completedLessons} из {totalLessons}</p>
       </div>
+
       <div style={styles.themesList}>
         {currentThemes.map((theme, themeIdx) => {
           const themeCompleted = [...Array(LESSONS_PER_THEME)].filter((_, lessonIdx) => progress[`${themeIdx}_${lessonIdx}`]).length;
           return (
             <div key={themeIdx} style={styles.themeCard}>
-              <h3 style={styles.themeTitle}>Тема {themeIdx + 1}: {theme.name} <span style={{ fontSize: '0.8rem', marginLeft: '10px' }}>({themeCompleted}/{LESSONS_PER_THEME})</span></h3>
+              <h3 style={styles.themeTitle}>
+                Тема {themeIdx + 1}: {theme.name}
+                <span style={styles.themeMeta}>({themeCompleted}/{LESSONS_PER_THEME})</span>
+              </h3>
               <div style={styles.lessonsGrid}>
                 {[...Array(LESSONS_PER_THEME)].map((_, lessonIdx) => {
                   const isCompleted = progress[`${themeIdx}_${lessonIdx}`];
@@ -134,7 +217,7 @@ const LessonsPage = ({ userData, updateUserData, keyboardTheme }) => {
                   else if (!isUnlocked) buttonStyle = { ...buttonStyle, ...styles.lessonLocked };
                   return (
                     <button key={lessonIdx} style={buttonStyle} onClick={() => handleSelectLesson(themeIdx, lessonIdx)} disabled={!isUnlocked}>
-                      Урок {lessonIdx + 1}{isCompleted && ' ✓'}
+                      Урок {lessonIdx + 1}{isCompleted && ' done'}
                     </button>
                   );
                 })}

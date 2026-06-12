@@ -58,8 +58,7 @@ const CoinAnimation = ({ coins, onComplete }) => {
       transform: 'translate(-50%, -50%)',
       fontSize: '48px',
       fontWeight: 'bold',
-      color: '#ffd700',
-      textShadow: '0 0 10px rgba(255, 215, 0, 0.5)',
+      color: '#4895ef',
       animation: 'popAndFade 1s ease-out forwards',
       zIndex: 10000,
       whiteSpace: 'nowrap'
@@ -104,10 +103,10 @@ const CoinAnimation = ({ coins, onComplete }) => {
       <style>{animationStyles}</style>
       <div style={styles.container}>
         <div style={styles.coin}>
-          🪙
+          +
         </div>
         <div style={styles.coinCount}>
-          +{coins} 🪙
+          +{coins}
         </div>
       </div>
     </>

@@ -22,7 +22,6 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
   const [mistakesCount, setMistakesCount] = useState(0);
   const [correctChars, setCorrectChars] = useState(0);
   const [combo, setCombo] = useState(0);
-  const [lastInputTime, setLastInputTime] = useState(Date.now());
   const inputRef = useRef(null);
   const timerRef = useRef(null);
   const [isPracticeMode, setIsPracticeMode] = useState(false);
@@ -35,119 +34,208 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
     medium: 'Средняя',
     hard: 'Сложная'
   };
+  const modeOptions = [
+    { value: 'words', label: 'слова' },
+    { value: 'time', label: 'время' },
+    { value: 'quote', label: 'цитата' },
+    { value: 'code', label: 'код' }
+  ];
+  const wordCountOptions = [10, 25, 50];
+  const difficultyOptions = ['easy', 'medium', 'hard'];
 
   const styles = {
     container: {
-      padding: '10px',
-      maxWidth: '1400px',
-      margin: '0 auto'
+      minHeight: '100vh',
+      maxWidth: '1040px',
+      margin: '0 auto',
+      padding: '36px clamp(20px, 6vw, 86px) 42px'
+    },
+    header: {
+      height: '44px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: '42px'
+    },
+    title: {
+      color: '#6d7887',
+      fontSize: '18px',
+      lineHeight: 1.2,
+      fontWeight: 600
+    },
+    headerStats: {
+      display: 'flex',
+      gap: '8px',
+      color: '#6d7887',
+      fontSize: '13px'
+    },
+    statPill: {
+      minWidth: '42px',
+      minHeight: '35px',
+      padding: '0 12px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '8px',
+      background: '#272e35'
+    },
+    process: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '18px'
     },
     settings: {
       display: 'flex',
-      gap: '12px',
+      alignItems: 'center',
+      gap: '10px',
       flexWrap: 'wrap',
-      marginBottom: '1rem',
-      justifyContent: 'center'
+      minHeight: '35px'
     },
     btn: {
-      background: '#3a3a4a',
+      minHeight: '32px',
+      background: '#272e35',
       border: 'none',
-      color: 'white',
-      padding: '8px 16px',
+      color: '#6d7887',
+      padding: '0 14px',
       borderRadius: '8px',
-      fontWeight: 'bold',
-      cursor: 'pointer'
+      fontWeight: 500,
+      fontSize: '14px',
+      fontFamily: 'inherit'
     },
     btnActive: {
-      background: '#4caf50',
-      boxShadow: '0 0 8px #4caf50'
+      color: '#4895ef',
+      background: 'rgba(72, 149, 239, 0.1)'
+    },
+    btnDisabled: {
+      opacity: 0.45,
+      cursor: 'not-allowed'
+    },
+    iconBtn: {
+      width: '35px',
+      minHeight: '35px',
+      padding: 0,
+      fontSize: '18px'
+    },
+    group: {
+      display: 'inline-flex',
+      overflow: 'hidden',
+      borderRadius: '8px',
+      background: '#272e35'
+    },
+    groupBtn: {
+      minHeight: '32px',
+      padding: '0 14px',
+      border: 0,
+      background: 'transparent',
+      color: '#6d7887',
+      fontWeight: 500,
+      fontSize: '14px',
+      fontFamily: 'inherit'
+    },
+    groupBtnActive: {
+      color: '#4895ef'
     },
     select: {
-      background: '#3a3a4a',
-      color: 'white',
-      padding: '8px 16px',
+      background: '#272e35',
+      color: '#6d7887',
+      padding: '0 14px',
+      minHeight: '32px',
       borderRadius: '8px',
       border: 'none',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      fontFamily: 'inherit'
     },
     timer: {
-      textAlign: 'center',
-      fontSize: '2rem',
-      marginBottom: '1rem',
-      color: '#ffd700'
+      width: 'max-content',
+      minHeight: '28px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      color: '#4895ef',
+      fontSize: '14px',
+      fontWeight: 600
     },
     typingArea: {
-      background: '#2d2d3a',
-      padding: '10px',
-      borderRadius: '20px',
-      margin: '1rem 0'
+      background: 'transparent',
+      padding: 0,
+      margin: 0
     },
     textToType: {
-      fontSize: '1.5rem',
-      lineHeight: '2rem',
-      marginBottom: '1rem',
+      minHeight: '134px',
+      maxHeight: '178px',
+      overflow: 'hidden',
+      fontSize: '28px',
+      lineHeight: '1.58',
+      marginBottom: '18px',
       display: 'flex',
       flexWrap: 'wrap',
-      gap: '12px',
-      justifyContent: 'center'
+      alignContent: 'flex-start',
+      gap: '0 17px',
+      justifyContent: 'flex-start',
+      color: '#6d7887'
     },
     word: {
       display: 'inline-block',
-      padding: '4px 8px',
-      borderRadius: '8px',
-      fontFamily: 'monospace',
-      transition: 'all 0.1s'
+      padding: 0,
+      borderRadius: 0,
+      fontFamily: 'inherit',
+      transition: 'color 0.1s ease'
     },
     wordActive: {
-      backgroundColor: 'rgba(76, 175, 80, 0.1)',
-      borderRadius: '8px'
+      color: '#8a94a5'
     },
     wordDone: {
-      opacity: 0.6
+      opacity: 0.62
     },
     charCorrect: {
-      color: '#ffffff',
-      textShadow: '0 0 5px #4caf50'
+      color: '#cbd0df'
     },
     charCorrectStatic: {
-      color: '#e0e0e0'
+      color: '#cbd0df'
     },
     charIncorrect: {
-      color: '#f44336',
-      backgroundColor: 'rgba(244, 67, 54, 0.3)',
-      borderRadius: '3px'
+      color: '#ff6b81',
+      backgroundColor: 'rgba(255, 107, 129, 0.14)',
+      borderRadius: '4px'
     },
     charCurrent: {
-      color: '#ffd700',
-      backgroundColor: 'rgba(255, 215, 0, 0.2)',
-      borderBottom: '2px solid #ffd700',
-      borderRadius: '3px'
+      color: '#cbd0df',
+      borderLeft: '2px solid #4895ef',
+      marginLeft: '-2px',
+      paddingLeft: '2px'
     },
     charPending: {
-      color: '#888'
+      color: '#6d7887'
     },
     progress: {
-      textAlign: 'center',
-      marginTop: '1rem',
+      marginTop: '10px',
       fontSize: '0.9rem',
-      opacity: 0.7
+      color: '#6d7887'
     },
     input: {
       width: '100%',
-      padding: '12px',
-      fontSize: '1.2rem',
-      background: '#1e1e2f',
-      border: '2px solid #4a4a5a',
-      color: 'white',
-      borderRadius: '12px',
+      height: '35px',
+      padding: '0 12px',
+      fontSize: '16px',
+      background: '#22272e',
+      border: '1px solid #cbd0df',
+      color: '#cbd0df',
+      borderRadius: '8px',
       outline: 'none',
-      textAlign: 'center'
+      textAlign: 'left'
     },
-    nextWordHint: {
-      textAlign: 'center',
-      marginTop: '1rem',
-      fontSize: '0.8rem',
-      opacity: 0.5
+    practiceBanner: {
+      width: 'max-content',
+      maxWidth: '100%',
+      padding: '8px 12px',
+      borderRadius: '8px',
+      background: 'rgba(72, 149, 239, 0.1)',
+      color: '#4895ef',
+      fontSize: '13px'
+    },
+    retryWrap: {
+      marginTop: '18px',
+      display: 'flex',
+      justifyContent: 'center'
     }
   };
 
@@ -206,7 +294,6 @@ const TestPage = ({ userData, updateUserData, practiceKeys = [], onPracticeCompl
     setMistakesCount(0);
     setCorrectChars(0);
     setCombo(0);
-    setLastInputTime(Date.now());
     const newText = generateText();
     setCurrentText(newText);
     setTypingHistory([]);
@@ -384,7 +471,6 @@ setTypingHistory(prev => {
       if (value.length < userInput.length) {
         setUserInput(value);
         setCurrentCharIndex(value.length);
-        setLastInputTime(Date.now());
         return;
       }
 
@@ -416,7 +502,6 @@ setTypingHistory(prev => {
           }));
         }
 
-        setLastInputTime(Date.now());
         setUserInput(value);
         setCurrentCharIndex(value.length);
         addTypingHistoryPoint(newCorrectChars, newMistakesCount);
@@ -433,7 +518,6 @@ setTypingHistory(prev => {
     if (value.length < userInput.length) {
       setUserInput(value);
       setCurrentCharIndex(prev => Math.max(0, prev - 1));
-      setLastInputTime(Date.now());
       return;
     }
     const lastChar = value[value.length - 1];
@@ -442,7 +526,6 @@ setTypingHistory(prev => {
         setCurrentWordIndex(prev => prev + 1);
         setUserInput('');
         setCurrentCharIndex(0);
-        setLastInputTime(Date.now());
         if (mode !== 'time' && currentWordIndex + 1 >= currentText.length) finishTest();
       } else {
         e.target.value = userInput;
@@ -469,7 +552,6 @@ setTypingHistory(prev => {
         }));
       }
 
-      setLastInputTime(Date.now());
       setUserInput(value);
       setCurrentCharIndex(prev => prev + 1);
 
@@ -602,56 +684,134 @@ setTypingHistory(prev => {
   const currentWord = currentText[currentWordIndex];
   let nextChar = currentWord ? currentWord[currentCharIndex] : null;
   if (currentWord && currentCharIndex >= currentWord.length) nextChar = mode === 'code' ? null : ' ';
+  const modeTitle = mode === 'time' ? 'время' : mode === 'quote' ? 'цитата' : mode === 'code' ? 'код' : 'слова';
+  const getButtonStyle = (active = false, extra = {}) => ({
+    ...styles.btn,
+    ...(active ? styles.btnActive : {}),
+    ...extra
+  });
+  const getGroupButtonStyle = (active = false) => ({
+    ...styles.groupBtn,
+    ...(active ? styles.groupBtnActive : {})
+  });
 
   return (
     <div style={styles.container}>
-      <div style={styles.settings}>
-        <select style={styles.select} value={mode} onChange={(e) => setMode(e.target.value)}>
-          <option value="words">Слова</option>
-          <option value="time">Время (30с)</option>
-          <option value="quote">Цитата</option>
-          <option value="code">Код</option>
-        </select>
-        {mode === 'words' && (
-          <select style={styles.select} value={wordCount} onChange={(e) => setWordCount(Number(e.target.value))}>
-            <option value={10}>10 слов</option>
-            <option value={25}>25 слов</option>
-            <option value={50}>50 слов</option>
-          </select>
-        )}
-        {mode === 'code' && (
-          <select style={styles.select} value={codeDifficulty} onChange={(e) => setCodeDifficulty(e.target.value)}>
-            <option value="easy">Лёгкая</option>
-            <option value="medium">Средняя</option>
-            <option value="hard">Сложная</option>
-          </select>
-        )}
-        {mode !== 'code' && (
-          <button style={{ ...styles.btn, ...(punctuation ? styles.btnActive : {}) }} onClick={() => setPunctuation(!punctuation)}>!? Пунктуация</button>
-        )}
-        <button style={styles.btn} onClick={() => setLanguage(language === 'russian' ? 'english' : 'russian')} disabled={mode === 'code'}>{mode === 'code' ? '💻 EN код' : language === 'russian' ? '🇷🇺 RU' : '🇬🇧 EN'}</button>
-        <button style={{ ...styles.btn, background: '#f44336' }} onClick={resetTest}>🔄 Сброс</button>
-      </div>
-
-      {mode === 'time' && <div style={styles.timer}>⏱️ {timeLeft} сек</div>}
-
-      <div style={styles.typingArea}>
-        <div style={styles.textToType}>{renderTextWithHighlight()}</div>
-        <div style={styles.progress}>
-          {mode !== 'time' ? `${mode === 'code' ? 'Элемент кода' : 'Слово'} ${currentWordIndex + 1} из ${currentText.length}` : `Напечатано слов: ${currentWordIndex} | Осталось: ${timeLeft} сек`}
-          {' | '}✅ {correctChars} | ❌ {mistakesCount} | 🔥 x{combo}
+      <header style={styles.header}>
+        <h1 style={styles.title}>Клавиатурный Тренажер</h1>
+        <div style={styles.headerStats}>
+          <span style={styles.statPill}>{userData.bestSpeedWPM || 0} wpm</span>
+          <span style={styles.statPill}>{userData.bestAccuracy || 0}%</span>
         </div>
-        <input ref={inputRef} type="text" value={userInput} onChange={handleInput}
-          placeholder={mode === 'code' ? 'Печатай код... Тест завершится автоматически' : 'Начните печатать... После каждого слова нажимайте ПРОБЕЛ'}
-          style={styles.input} autoFocus disabled={stats !== null} />
-      </div>
+      </header>
+
+      <section style={styles.process}>
+        {isPracticeMode && (
+          <div style={styles.practiceBanner}>
+            отработка: {practiceProblemKeys.join(', ')}
+          </div>
+        )}
+
+        {mode === 'time' && <div style={styles.timer}>{timeLeft}s</div>}
+
+        <div style={styles.typingArea}>
+          <div style={styles.textToType}>{renderTextWithHighlight()}</div>
+          <input
+            ref={inputRef}
+            type="text"
+            value={userInput}
+            onChange={handleInput}
+            placeholder={mode === 'code' ? 'печатайте код' : 'печатайте здесь'}
+            style={styles.input}
+            autoFocus
+            disabled={stats !== null}
+          />
+          <div style={styles.progress}>
+            {mode !== 'time'
+              ? `${mode === 'code' ? 'элемент' : 'слово'} ${currentWordIndex + 1}/${currentText.length}`
+              : `слов ${currentWordIndex} / осталось ${timeLeft}s`}
+            {' · '}ok {correctChars} · err {mistakesCount} · x{combo}
+          </div>
+        </div>
+
+        <div style={styles.settings}>
+          <button style={{ ...getButtonStyle(false), ...styles.iconBtn }} onClick={resetTest} title="перезапустить">
+            ↻
+          </button>
+
+          <button
+            style={{
+              ...getButtonStyle(false),
+              ...(mode === 'code' ? styles.btnDisabled : {})
+            }}
+            onClick={() => setLanguage(language === 'russian' ? 'english' : 'russian')}
+            disabled={mode === 'code'}
+          >
+            {mode === 'code' ? 'english' : language === 'russian' ? 'russian' : 'english'}
+          </button>
+
+          <div style={styles.group} aria-label="режим">
+            {modeOptions.map(option => (
+              <button
+                key={option.value}
+                style={getGroupButtonStyle(mode === option.value)}
+                onClick={() => setMode(option.value)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+
+          {mode === 'words' && (
+            <div style={styles.group} aria-label="количество слов">
+              {wordCountOptions.map(count => (
+                <button
+                  key={count}
+                  style={getGroupButtonStyle(wordCount === count)}
+                  onClick={() => setWordCount(count)}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {mode === 'time' && (
+            <div style={styles.group} aria-label="длительность">
+              <button style={getGroupButtonStyle(true)}>30s</button>
+            </div>
+          )}
+
+          {mode === 'code' && (
+            <div style={styles.group} aria-label="сложность">
+              {difficultyOptions.map(option => (
+                <button
+                  key={option}
+                  style={getGroupButtonStyle(codeDifficulty === option)}
+                  onClick={() => setCodeDifficulty(option)}
+                >
+                  {codeDifficultyLabels[option].toLowerCase()}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {mode !== 'code' && (
+            <button style={getButtonStyle(punctuation)} onClick={() => setPunctuation(!punctuation)}>
+              пунктуация
+            </button>
+          )}
+
+          <span style={{ color: '#6d7887', fontSize: '13px' }}>{modeTitle}</span>
+        </div>
+      </section>
 
       {stats && (
         <>
-          <StatsDashboard stats={stats} title="📊 Результаты теста" typingHistory={typingHistory} />
+          <StatsDashboard stats={stats} title="Результаты теста" typingHistory={typingHistory} />
           {practiceProblemKeys.length > 0 && (
-            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <button onClick={() => {
+            <div style={styles.retryWrap}>
+              <button style={getButtonStyle(false)} onClick={() => {
                 if (timerRef.current) clearInterval(timerRef.current);
                 setIsActive(false);
                 setUserInput('');
@@ -668,7 +828,7 @@ setTypingHistory(prev => {
                 const practiceText = generatePracticeText(practiceProblemKeys);
                 setCurrentText(practiceText);
                 setTimeout(() => { if (inputRef.current) inputRef.current.focus(); }, 100);
-              }}>🔁 Отработать ошибки ({practiceProblemKeys.join(', ')})</button>
+              }}>Отработать ошибки ({practiceProblemKeys.join(', ')})</button>
             </div>
           )}
         </>
@@ -678,8 +838,7 @@ setTypingHistory(prev => {
       {
         !stats && (
           <KeyboardGuide nextChar={nextChar} keyboardTheme={keyboardTheme} language={mode === 'code' ? 'english' : language} />
-        )
-      }
+        )}
     </div>
   );
 };

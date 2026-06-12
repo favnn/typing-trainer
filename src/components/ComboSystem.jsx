@@ -3,25 +3,25 @@ import React, { useEffect, useState } from 'react';
 const ComboSystem = ({ combo, lastAccuracy, isActive, onComboChange }) => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationText, setNotificationText] = useState('');
-  const [notificationColor, setNotificationColor] = useState('#ffd700');
+  const [notificationColor, setNotificationColor] = useState('#4895ef');
 
   // Мотивационные фразы для юных программистов
   const comboMessages = React.useMemo(() => ({
-    5: { text: "🔥 Код ускоряется!", color: "#ff9800" },
-    10: { text: "💻 Ты печатаешь как джуниор!", color: "#ff5722" },
-    15: { text: "⚡ Мидл-разработчик в деле!", color: "#4caf50" },
-    20: { text: "🚀 Сеньор, ты гений!", color: "#2196f3" },
-    30: { text: "👑 Легенда клавиатуры!", color: "#ffd700" },
-    50: { text: "🏆 Твой код ждет весь мир!", color: "#e91e63" }
+    5: { text: "Код ускоряется", color: "#4895ef" },
+    10: { text: "Ровный темп", color: "#4895ef" },
+    15: { text: "Серия растет", color: "#4895ef" },
+    20: { text: "Отличный ритм", color: "#4895ef" },
+    30: { text: "Сильная серия", color: "#4895ef" },
+    50: { text: "Максимальная серия", color: "#4895ef" }
   }), []);
 
   // Фразы за идеальное попадание
   const perfectMessages = React.useMemo(() => [
-    "✨ Безупречно!",
-    "🎯 Точное попадание!",
-    "💪 Так держать!",
-    "⭐ Звездный час!",
-    "🔥 Горячая клавиша!"
+    "Безупречно",
+    "Точное попадание",
+    "Хороший темп",
+    "Ровно",
+    "Чистый ввод"
   ], []);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const ComboSystem = ({ combo, lastAccuracy, isActive, onComboChange }) => {
     if (lastAccuracy === 100 && isActive && combo > 0) {
       const randomMessage = perfectMessages[Math.floor(Math.random() * perfectMessages.length)];
       setNotificationText(randomMessage);
-      setNotificationColor('#4caf50');
+      setNotificationColor('#4895ef');
       setShowNotification(true);
       setTimeout(() => setShowNotification(false), 800);
     }
@@ -72,29 +72,28 @@ const ComboSystem = ({ combo, lastAccuracy, isActive, onComboChange }) => {
       gap: '10px'
     },
     comboDisplay: {
-      background: 'linear-gradient(135deg, #2d2d3a, #1e1e2f)',
-      borderRadius: '20px',
+      background: '#272e35',
+      borderRadius: '8px',
       padding: '10px 20px',
       textAlign: 'center',
-      border: `2px solid ${combo >= 10 ? '#ffd700' : '#4a4a5a'}`,
-      boxShadow: combo >= 10 ? '0 0 20px rgba(255, 215, 0, 0.3)' : 'none',
+      border: `1px solid ${combo >= 10 ? 'rgba(72, 149, 239, 0.45)' : 'rgba(203, 208, 223, 0.08)'}`,
+      boxShadow: 'none',
       transition: 'all 0.3s ease',
       animation: combo >= 10 ? 'pulse 0.5s ease' : 'none'
     },
     comboValue: {
       fontSize: '2rem',
       fontWeight: 'bold',
-      color: '#ffd700',
-      textShadow: '0 0 10px rgba(255, 215, 0, 0.5)'
+      color: '#cbd0df'
     },
     comboLabel: {
       fontSize: '0.8rem',
-      color: '#e0e0e0',
+      color: '#6d7887',
       marginTop: '5px'
     },
     multiplier: {
       fontSize: '1rem',
-      color: '#4caf50',
+      color: '#4895ef',
       marginTop: '5px'
     },
     notification: {
@@ -102,17 +101,16 @@ const ComboSystem = ({ combo, lastAccuracy, isActive, onComboChange }) => {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
-      background: `linear-gradient(135deg, ${notificationColor}, ${notificationColor}cc)`,
+      background: notificationColor,
       padding: '15px 30px',
-      borderRadius: '50px',
+      borderRadius: '8px',
       fontSize: '1.5rem',
       fontWeight: 'bold',
-      color: 'white',
-      textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+      color: '#22272e',
       whiteSpace: 'nowrap',
       zIndex: 2000,
       animation: 'flyInOut 1.5s ease forwards',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+      boxShadow: 'none'
     }
   };
 
