@@ -161,7 +161,7 @@ function App() {
     <div className="App">
       <nav className="navbar">
         <div className="nav-brand" title="typing trainer">
-          <img src="/logo.png" alt="Typing trainer" className="nav-logo" />
+          <img src="/logoMain.png" alt="Typing trainer" className="nav-logo" />
         </div>
 
         <div className="nav-links">
