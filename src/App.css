@@ -1,45 +1,113 @@
-.navbar {
+.App {
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background: #191A31;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  max-height: 110px;
-  min-height: 60px;
+  background: transparent;
+  color: #cbd0df;
 }
 
-.nav-links {
+.navbar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+  width: 100px;
+  min-height: 100vh;
+  padding: 28px 0 24px;
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: wrap;
+  background: #272e35;
+  border-right: 1px solid rgba(203, 208, 223, 0.08);
+}
+
+.nav-brand {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 38px;
+  color: #4895ef;
+  filter: drop-shadow(0 0 10px rgba(72, 149, 239, 0.24));
 }
 
 .nav-logo {
-  height: 80px;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
 }
 
-.nav-links button {
-  background: none;
-  border: none;
-  color: #e0e0e0;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
+.nav-section {
+  width: 100%;
+  margin-bottom: 34px;
+  color: #6d7887;
+  font-size: 13px;
+  text-align: center;
+}
+
+.nav-links,
+.nav-bottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-bottom {
+  margin-top: auto;
+  gap: 14px;
+}
+
+.nav-item,
+.user-profile {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 0;
   border-radius: 8px;
+  background: transparent;
+  color: #6d7887;
+  font: inherit;
 }
 
-.nav-links button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.nav-item:hover,
+.user-profile:hover,
+.nav-item.active {
+  color: #4895ef;
+  background: rgba(72, 149, 239, 0.1);
+}
+
+.nav-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.nav-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .coin-display {
-  background: #ffd700;
-  color: #1e1e2f;
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-weight: bold;
+  min-width: 42px;
+  height: 28px;
+  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #22272e;
+  color: #6d7887;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  margin-left: 100px;
 }
 
 @keyframes coinFloat {
@@ -64,7 +132,7 @@
   left: 50%;
   width: 0;
   height: 0;
-  background: radial-gradient(circle, rgba(255,215,0,0.3), transparent);
+  background: radial-gradient(circle, rgba(72,149,239,0.24), transparent);
   transform: translate(-50%, -50%);
   transition: width 0.3s, height 0.3s;
 }
@@ -74,8 +142,42 @@
   height: 300px;
 }
 
-@media (max-width: 1200px) {
-  .nav-logo {
-    height: 40px;
+@media (max-width: 760px) {
+  .App {
+    display: block;
+  }
+
+  .navbar {
+    inset: auto 0 0 0;
+    width: 100%;
+    min-height: 64px;
+    height: 64px;
+    padding: 0 12px;
+    flex-direction: row;
+    justify-content: center;
+    border-right: 0;
+    border-top: 1px solid rgba(203, 208, 223, 0.08);
+  }
+
+  .nav-brand,
+  .nav-section,
+  .nav-bottom {
+    display: none;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .nav-item {
+    width: 44px;
+    height: 44px;
+  }
+
+  .app-content {
+    margin-left: 0;
+    padding-bottom: 76px;
   }
 }

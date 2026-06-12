@@ -16,7 +16,7 @@ const getKeyboardTheme = (activeSkins) => {
 };
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState('test');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -34,17 +34,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const resetBodyBackground = () => {
-      document.body.style.background = '';
-      document.body.style.backgroundImage = '';
-      document.body.style.backgroundSize = '';
-      document.body.style.backgroundPosition = '';
-      document.body.style.backgroundRepeat = '';
-      document.body.style.backgroundAttachment = '';
-      document.body.style.backgroundColor = '';
+    const rootNodes = [document.documentElement, document.body];
+    const resetPageBackground = () => {
+      rootNodes.forEach(node => {
+        node.style.background = '';
+        node.style.backgroundImage = '';
+        node.style.backgroundSize = '';
+        node.style.backgroundPosition = '';
+        node.style.backgroundRepeat = '';
+        node.style.backgroundAttachment = '';
+        node.style.backgroundColor = '#22272e';
+      });
     };
 
-    resetBodyBackground();
+    resetPageBackground();
 
     if (userData?.activeSkins?.background) {
       const bgItem = shopItems.find(
@@ -52,13 +55,15 @@ function App() {
       );
 
       if (bgItem?.style) {
-        Object.assign(document.body.style, bgItem.style);
-        document.body.style.backgroundAttachment = 'fixed';
+        rootNodes.forEach(node => {
+          Object.assign(node.style, bgItem.style);
+          node.style.backgroundAttachment = 'fixed';
+        });
       }
     }
 
     return () => {
-      resetBodyBackground();
+      resetPageBackground();
     };
   }, [userData?.activeSkins?.background]);
 
@@ -85,7 +90,7 @@ function App() {
     setCurrentUser(null);
     setUserData(null);
     setIsAuthenticated(false);
-    setCurrentPage('home');
+    setCurrentPage('test');
     setPracticeKeys([]);
   };
 
@@ -95,7 +100,7 @@ function App() {
     setIsAuthenticated(true);
     localStorage.setItem('currentUser', username);
     localStorage.setItem('userData', JSON.stringify(data));
-    setCurrentPage('home');
+    setCurrentPage('test');
     setPracticeKeys([]);
   };
 
@@ -144,44 +149,68 @@ function App() {
   }
 
   const keyboardTheme = getKeyboardTheme(userData?.activeSkins);
+  const navItems = [
+    { id: 'home', label: 'Главная', icon: '⌂' },
+    { id: 'test', label: 'Тест', icon: '⌨' },
+    { id: 'lessons', label: 'Уроки', icon: '▤' },
+    { id: 'shop', label: 'Магазин', icon: '◫' },
+    { id: 'stats', label: 'Статистика', icon: '♕' }
+  ];
 
   return (
     <div className="App">
       <nav className="navbar">
-<img src="/logo.png" alt="Дабл ю Дабл ю" className="nav-logo" />        <div className="nav-links">
-          <button onClick={() => setCurrentPage('home')}>Главная</button>
-          <button onClick={() => setCurrentPage('test')}>Тест</button>
-          <button onClick={() => setCurrentPage('lessons')}>Уроки</button>
-          <button onClick={() => setCurrentPage('shop')}>Магазин</button>
-          <button onClick={() => setCurrentPage('stats')}>Статистика</button>
-          <div className="coin-display">🪙 {userData?.coins || 0}</div>
-          <div className="user-profile" onClick={handleLogout} style={{ cursor: 'pointer' }}>
-            👤 {currentUser} 🚪
-          </div>
+        <div className="nav-brand" title="typing trainer">
+          <img src="/logo.png" alt="Typing trainer" className="nav-logo" />
+        </div>
+
+        <div className="nav-links">
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              className={`nav-item ${currentPage === item.id ? 'active' : ''}`}
+              onClick={() => setCurrentPage(item.id)}
+              title={item.label}
+              aria-current={currentPage === item.id ? 'page' : undefined}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-text">{item.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="nav-bottom">
+          <div className="coin-display" title="Монеты">{userData?.coins || 0}</div>
+          <button className="user-profile" onClick={handleLogout} title={`Выйти: ${currentUser}`}>
+            <span className="nav-icon">○</span>
+            <span className="nav-text">{currentUser}</span>
+          </button>
         </div>
       </nav>
 
-      {currentPage === 'home' && <Home userData={userData} />}
-      {currentPage === 'test' && (
-        <TestPage
-          userData={userData}
-          updateUserData={updateUserDataLocal}
-          practiceKeys={practiceKeys}
-          onPracticeComplete={handlePracticeComplete}
-          keyboardTheme={keyboardTheme}
-        />
-      )}
-      {currentPage === 'lessons' && (
-        <LessonsPage userData={userData} updateUserData={updateUserDataLocal} keyboardTheme={keyboardTheme} />
-      )}
-      {currentPage === 'stats' && (
-        <StatsPage
-          key={userData?.problemKeys ? JSON.stringify(userData.problemKeys) : Date.now()}
-          userData={userData}
-          onPracticeErrors={handlePracticeErrors}
-        />
-      )}
-      {currentPage === 'shop' && <ShopPage userData={userData} updateUserData={updateUserDataLocal} />}
+      <main className="app-content">
+        {currentPage === 'home' && <Home userData={userData} />}
+        {currentPage === 'test' && (
+          <TestPage
+            userData={userData}
+            updateUserData={updateUserDataLocal}
+            practiceKeys={practiceKeys}
+            onPracticeComplete={handlePracticeComplete}
+            keyboardTheme={keyboardTheme}
+          />
+        )}
+        {currentPage === 'lessons' && (
+          <LessonsPage userData={userData} updateUserData={updateUserDataLocal} keyboardTheme={keyboardTheme} />
+        )}
+        {currentPage === 'stats' && (
+          <StatsPage
+            key={userData?.problemKeys ? JSON.stringify(userData.problemKeys) : Date.now()}
+            userData={userData}
+            onPracticeErrors={handlePracticeErrors}
+          />
+        )}
+        {currentPage === 'shop' && <ShopPage userData={userData} updateUserData={updateUserDataLocal} />}
+      </main>
     </div>
   );
 }

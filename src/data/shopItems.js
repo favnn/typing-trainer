@@ -8,7 +8,7 @@ const shopItems = [
   // ========== ОБОИ ==========
   { 
     id: 'bg_default', name: 'Стандартный', category: 'background', price: 0, default: true,
-    style: { background: 'linear-gradient(135deg, #1e1e2f 0%, #2a2a3b 100%)' }
+    style: { background: '#22272e' }
   },
   { 
     id: 'bg_ocean', name: 'Океан', category: 'background', price: 150,
@@ -82,7 +82,7 @@ const shopItems = [
   // ========== РАСКЛАДКИ ==========
   { 
     id: 'kb_default', name: 'Классическая', category: 'keyboard', price: 0, default: true,
-    style: { keyBg: '#2d2d3a', keyBorder: '#4a4a5a', keyText: '#e0e0e0', highlightBg: '#ffd700', highlightText: '#1e1e2f' }
+    style: { keyBg: 'transparent', keyBorder: '#cbd0df', keyText: '#cbd0df', highlightBg: '#cbd0df', highlightText: '#22272e' }
   },
   { 
     id: 'kb_neon', name: 'Неон', category: 'keyboard', price: 300,

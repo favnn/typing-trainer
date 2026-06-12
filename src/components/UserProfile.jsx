@@ -12,51 +12,53 @@ const UserProfile = ({ username, userData, onLogout }) => {
       display: 'flex',
       alignItems: 'center',
       gap: '8px',
-      background: 'rgba(255, 255, 255, 0.1)',
+      background: '#272e35',
       padding: '0.3rem 0.8rem',
-      borderRadius: '20px',
-      fontSize: '0.9rem'
+      borderRadius: '8px',
+      fontSize: '0.9rem',
+      color: '#6d7887'
     },
     menu: {
       position: 'absolute',
       top: '100%',
       right: 0,
       marginTop: '8px',
-      background: '#2d2d3a',
-      borderRadius: '12px',
+      background: '#272e35',
+      borderRadius: '8px',
       padding: '0.5rem',
       minWidth: '150px',
       zIndex: 1000,
-      boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+      border: '1px solid rgba(203, 208, 223, 0.08)'
     },
     menuItem: {
       padding: '8px 12px',
       cursor: 'pointer',
       borderRadius: '6px',
-      transition: 'background 0.2s'
+      transition: 'background 0.2s',
+      color: '#6d7887'
     }
   };
 
   return (
     <div style={styles.profile} onMouseEnter={() => setShowMenu(true)} onMouseLeave={() => setShowMenu(false)}>
       <div style={styles.username}>
-        <span>👤</span> {username}
+        <span>○</span> {username}
       </div>
       
       {showMenu && (
         <div style={styles.menu}>
-          <div style={{...styles.menuItem, color: '#ffd700'}}>
-            🪙 {userData.coins} монет
+          <div style={{...styles.menuItem, color: '#cbd0df'}}>
+            {userData.coins} монет
           </div>
-          <div style={{...styles.menuItem, color: '#4caf50'}}>
-            ⚡ {userData.bestSpeedWPM} WPM
+          <div style={{...styles.menuItem, color: '#4895ef'}}>
+            {userData.bestSpeedWPM} WPM
           </div>
-          <hr style={{margin: '4px 0', borderColor: '#4a4a5a'}} />
+          <hr style={{margin: '4px 0', borderColor: 'rgba(203, 208, 223, 0.08)'}} />
           <div 
-            style={{...styles.menuItem, color: '#f44336'}}
+            style={{...styles.menuItem, color: '#ff6b81'}}
             onClick={onLogout}
           >
-            🚪 Выйти
+            Выйти
           </div>
         </div>
       )}

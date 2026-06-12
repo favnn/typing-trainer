@@ -4,22 +4,29 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  background: #22272e;
+  overscroll-behavior-y: none;
+}
+
 body {
-  font-family: 'Segoe UI', 'Roboto', monospace;
-  background: linear-gradient(135deg, #1e1e2f 0%, #2a2a3b 100%);
-  color: #e0e0e0;
+  font-family: 'Noto Sans Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  background: #22272e;
+  color: #cbd0df;
   min-height: 100vh;
+  overscroll-behavior-y: none;
 }
 
 button {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
 }
 
 button:active {
-  transform: scale(0.97);
+  transform: none;
 }
 
 input, textarea {
-  font-family: 'Courier New', monospace;
+  font-family: inherit;
 }
