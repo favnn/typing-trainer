@@ -57,9 +57,11 @@ const ShopPage = ({ userData, updateUserData }) => {
     }
   };
 
+  const visibleItems = shopItems.filter(item => !item.hidden);
+
   const filteredItems = filterCategory === 'all'
-    ? shopItems
-    : shopItems.filter(item => item.category === filterCategory);
+    ? visibleItems
+    : visibleItems.filter(item => item.category === filterCategory);
 
   const isActive = (item) => {
     if (isWardrobeItem(item)) {
