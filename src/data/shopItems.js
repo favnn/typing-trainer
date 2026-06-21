@@ -2,6 +2,7 @@ import wardrobeItems from './wardrobeItems';
 import bg67 from '../assets/bg/67-bg.png';
 import bgCheremsha from '../assets/bg/cheremsha-bg.webp';
 import bgSigma from '../assets/bg/sigma-bg.jpg';
+import bgBrainRot from '../assets/bg/brainrot-bg.JPG';
 import bgFnaf from '../assets/bg/fnaf-bg.jpg';
 
 const shopItems = [
@@ -63,9 +64,23 @@ const shopItems = [
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       backgroundColor: '#101827'
+    },
+    hidden: true
+  },
+  {
+    id: 'bg_brainrot',
+    name: 'Брейнрот',
+    category: 'background',
+    price: 500,
+    style: {
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)), url(${bgBrainRot})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundColor: '#101827'
     }
   },
-    {
+  {
     id: 'bg_fnaf',
     name: 'Fnaf',
     category: 'background',

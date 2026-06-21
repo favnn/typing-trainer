@@ -3,6 +3,7 @@ import characterBase from '../data/characterBase';
 import wardrobeItems from '../data/wardrobeItems';
 import cheremshaCat from '../assets/cheremsha-cat.png';
 import sigmaImg from '../assets/sigma.jpg'
+import brainRot from '../assets/brainrot.JPG'
 
 const Character = ({ activeWardrobe }) => {
   const getActive = (slot) => {
@@ -470,6 +471,18 @@ const Character = ({ activeWardrobe }) => {
       fontSize: '14px',
       lineHeight: 1,
     },
+    bodyPrintBrainRotImage: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      display: 'block',
+    },
+    bodyPrintBrainRot: {
+      width: '50px',
+      height: '36px',
+      borderRadius: '9px',
+      overflow: 'hidden',
+    },
   };
 
   // Рендер волос/шапок
@@ -515,6 +528,19 @@ const Character = ({ activeWardrobe }) => {
             src={sigmaImg}
             alt="Сигма"
             style={styles.bodyPrintSigmaImage}
+            draggable={false}
+          />
+        </div>
+      );
+    }
+
+    if (bodyItem.render === 'tshirt_brainrot') {
+      return (
+        <div style={{ ...styles.bodyPrintBase, ...styles.bodyPrintBrainRot }}>
+          <img
+            src={brainRot}
+            alt="Брейнрот"
+            style={styles.bodyPrintBrainRotImage}
             draggable={false}
           />
         </div>

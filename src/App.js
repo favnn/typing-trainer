@@ -10,9 +10,17 @@ import shopItems from './data/shopItems';
 import './App.css';
 
 const getKeyboardTheme = (activeSkins) => {
-  const skinId = activeSkins?.keyboard;
-  const found = shopItems.find(item => item.id === skinId);
-  return found?.style || shopItems.find(item => item.id === 'kb_default').style;
+  const skinId = activeSkins?.keyboard || 'kb_default';
+
+  const found = shopItems.find(
+    item => item.id === skinId && item.category === 'keyboard'
+  );
+
+  const defaultKeyboard = shopItems.find(
+    item => item.id === 'kb_default' && item.category === 'keyboard'
+  );
+
+  return found?.style || defaultKeyboard?.style || {};
 };
 
 function App() {
@@ -49,17 +57,24 @@ function App() {
 
     resetPageBackground();
 
-    if (userData?.activeSkins?.background) {
-      const bgItem = shopItems.find(
-        item => item.id === userData.activeSkins.background
+    const backgroundId = userData?.activeSkins?.background || 'bg_default';
+
+    const bgItem =
+      shopItems.find(
+        item =>
+          item.id === backgroundId &&
+          item.category === 'background' &&
+          !item.hidden
+      ) ||
+      shopItems.find(
+        item => item.id === 'bg_default' && item.category === 'background'
       );
 
-      if (bgItem?.style) {
-        rootNodes.forEach(node => {
-          Object.assign(node.style, bgItem.style);
-          node.style.backgroundAttachment = 'fixed';
-        });
-      }
+    if (bgItem?.style) {
+      rootNodes.forEach(node => {
+        Object.assign(node.style, bgItem.style);
+        node.style.backgroundAttachment = 'fixed';
+      });
     }
 
     return () => {
